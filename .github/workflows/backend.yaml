@@ -28,6 +28,6 @@ jobs:
         run: python -c "import sys; print(sys.version)"
 
       # Run pre commit checks
-      - uses: pre-commit/action@v3.0.0
+      - uses: pre-commit/action@v3.0.1
         id: pre-commit-check
         name: Pre Commit Checks
