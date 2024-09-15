@@ -1,0 +1,43 @@
+services:
+  worldguess-frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    volumes:
+      - frontend-build:/frontend/build
+    networks:
+      - worldguess-network
+
+  worldguess-backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    volumes:
+      - frontend-build:/app/frontend/build # Mount the frontend build files in the backend
+    depends_on:
+      - worldguess-frontend
+      - db
+    environment:
+      POSTGRES_DB: worldguess
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_HOST: db
+    networks:
+      - worldguess-network
+
+  db:
+    image: postgis/postgis:latest
+    environment:
+      POSTGRES_DB: worldguess
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    networks:
+      - worldguess-network
+
+volumes:
+  frontend-build: # Shared volume for frontend build files
+    driver: local
+
+networks:
+  worldguess-network:
+    driver: internal

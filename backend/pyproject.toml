@@ -12,6 +12,8 @@ fastapi = "^0.114.1"
 sqlalchemy = "^2.0.34"
 uvicorn = "^0.30.6"
 pydantic-settings = "^2.5.2"
+pydantic-geojson = "^0.1.1"
+geoalchemy2 = "^0.15.2"
 
 [tool.poetry.group.dev.dependencies]
 mypy = "^1.11.2"

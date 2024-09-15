@@ -1,0 +1,25 @@
+name: "Frontend checks"
+
+on:
+  push:
+    paths:
+    - 'frontend/**'
+
+jobs:
+  build:
+    name: Test and Lint
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup NodeJS
+        uses: actions/setup-node@v4
+      - name: Install NPM packages
+        run: npm install
+      - name: Static checks
+        run: npm run check-types
+      - name: Linting
+        run: npm run lint
+      - name: Test Build
+        run: npm run build

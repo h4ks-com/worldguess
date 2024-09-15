@@ -10,17 +10,14 @@ ENV POETRY_NO_INTERACTION=1 \
 
 WORKDIR /backend
 
-COPY pyproject.toml poetry.lock ./
+COPY /backend/pyproject.toml /backend/poetry.lock ./
 RUN touch README.md 
 RUN poetry install --without dev --no-root
 RUN rm -rf $POETRY_CACHE_DIR
 
 FROM base as dev
 WORKDIR /backend
-COPY backend/ backend
-COPY static/ static
-COPY requirements.txt .
+COPY backend /backend
+COPY frontend/build /backend/static
 
-RUN pip install --no-cache-dir -r requirements.txt
-
-ENTRYPOINT ["python3", "-m", "src.api"]
+ENTRYPOINT ["poetry", "run", "python3", "-m", "src.api"]
