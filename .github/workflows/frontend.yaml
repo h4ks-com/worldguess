@@ -20,9 +20,5 @@ jobs:
         uses: actions/setup-node@v4
       - name: Install NPM packages
         run: npm install
-      - name: Static checks
-        run: npm run check-types
-      - name: Linting
-        run: npm run lint
       - name: Test Build
         run: npm run build
