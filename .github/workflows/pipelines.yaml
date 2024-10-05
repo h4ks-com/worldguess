@@ -1,0 +1,33 @@
+name: Pipeline Checks
+
+on:
+  push:
+    paths:
+    - 'pipelines/**'
+
+jobs:
+  build:
+    name: Test and Lint
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./pipelines
+    strategy:
+      matrix:
+        python-version: ["3.12"]
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: 'pip'
+
+      - name: Display Python version
+        run: python -c "import sys; print(sys.version)"
+
+      # Run pre commit checks
+      - uses: pre-commit/action@v3.0.1
+        id: pre-commit-check
+        name: Pre Commit Checks

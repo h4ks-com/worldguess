@@ -2,6 +2,8 @@ name: Check
 
 on:
   push:
+    paths:
+    - 'frontend/**'
 
 permissions:
   contents: read
@@ -9,6 +11,9 @@ permissions:
 jobs:
   main:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./frontend
     steps:
       - uses: actions/checkout@v4
         with:
