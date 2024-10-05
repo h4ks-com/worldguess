@@ -4,6 +4,7 @@ on:
   push:
     paths:
     - 'pipelines/**'
+    - './github/workflows/pipelines.yaml'
 
 jobs:
   build:
