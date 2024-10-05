@@ -51,4 +51,4 @@ services:
       STATIC_DIR: /static/build
       PORT: 8000
     ports:
-      - "8000:8000"
+      - "${APP_PORT}:8000"
