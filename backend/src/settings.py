@@ -9,6 +9,10 @@ class Settings(BaseSettings):
     RELOAD: bool = False
     DEBUG: bool = False
     STATIC_DIR: str = "./static"
+    POSTGRES_DB: str = "worldguess"
+    POSTGRES_USER: str = "worldguess"
+    POSTGRES_PASSWORD: str = "worldguess"
+    POSTGRES_HOST: str = "localhost"
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",
