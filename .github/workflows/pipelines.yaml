@@ -4,7 +4,7 @@ on:
   push:
     paths:
     - 'pipelines/**'
-    - './github/workflows/pipelines.yaml'
+    - 'github/workflows/pipelines.yaml'
 
 jobs:
   build:
@@ -13,6 +13,7 @@ jobs:
     defaults:
       run:
         working-directory: ./pipelines
+        shell: bash
     strategy:
       matrix:
         python-version: ["3.12"]
@@ -29,6 +30,7 @@ jobs:
         run: python -c "import sys; print(sys.version)"
 
       # Run pre commit checks
-      - uses: pre-commit/action@v3.0.1
-        id: pre-commit-check
+      - run: python -m pip install pre-commit==3.8.0
+      - run: python -m pip freeze --local
+      - run: pre-commit run --all --show-diff-on-failure --color=always
         name: Pre Commit Checks

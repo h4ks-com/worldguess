@@ -4,7 +4,7 @@ on:
   push:
     paths:
     - 'frontend/**'
-    - './github/workflows/frontend.yaml'
+    - 'github/workflows/frontend.yaml'
 
 permissions:
   contents: read
