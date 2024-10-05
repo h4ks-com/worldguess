@@ -1,24 +1,46 @@
-name: "Frontend checks"
+name: Check
 
 on:
   push:
-    paths:
-    - 'frontend/**'
+
+permissions:
+  contents: read
 
 jobs:
-  build:
-    name: Test and Lint
+  main:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./frontend
-
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
-      - name: Setup NodeJS
-        uses: actions/setup-node@v4
-      - name: Install NPM packages
-        run: npm install
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install Dependencies
+        run: npm install;
+
+      - name: Workarounds for v8 9
+        run: npm i -g npm@8 && npm install -g react-scripts
+
+      - name: Cache node_modules
+        id: cache-node_modules
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key:
+            node_modules-${{ matrix.os }}-${{ matrix.node-version }}-${{
+            hashFiles('package-lock.json') }}
+
       - name: Test Build
         run: npm run build
+
+      # This action messes up the node_modules folder so leave it at the end (not even needed to have this action)
+      - name: Check Prettier Lints/Formatting
+        uses: creyD/prettier_action@v4.3
+        with:
+          only_changed: True
+          dry: True
+          prettier_plugins: 'trivago/prettier-plugin-sort-imports'
+          prettier_options: --check src/**/*.{ts,tsx}
