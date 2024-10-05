@@ -29,15 +29,12 @@ api = FastAPI(
 
 api.include_router(main_router)
 
-if settings.DEBUG:
-    static_dir = "../frontend/build/"
-    if not os.path.exists(static_dir):
-        print(
-            f"Static directory {static_dir} does not exist, make sure to build the frontend first with `npm run build`"
-        )
-        exit(1)
-else:
-    static_dir = "/static"
+static_dir = settings.STATIC_DIR
+if not os.path.exists(static_dir):
+    print(
+        f"Static directory {static_dir} does not exist, make sure to build the frontend first with `npm run build`"
+    )
+    exit(1)
 
 api.mount("", StaticFiles(directory=static_dir), name="static")
 

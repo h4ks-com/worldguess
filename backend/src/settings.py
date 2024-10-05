@@ -4,12 +4,15 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    # Uvicorn Settings
     HOST: str = "0.0.0.0"
     PORT: int = 8090
     RELOAD: bool = False
     DEBUG: bool = False
-    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
+    STATIC_DIR: str = "./static"
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8",
+    )
 
 
 @lru_cache()

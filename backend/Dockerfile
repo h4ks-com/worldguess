@@ -10,14 +10,13 @@ ENV POETRY_NO_INTERACTION=1 \
 
 WORKDIR /backend
 
-COPY /backend/pyproject.toml /backend/poetry.lock ./
+COPY ./pyproject.toml ./poetry.lock ./
 RUN touch README.md 
 RUN poetry install --without dev --no-root
 RUN rm -rf $POETRY_CACHE_DIR
 
 FROM base as dev
 WORKDIR /backend
-COPY backend /backend
-COPY frontend/build /backend/static
+COPY . /backend
 
 ENTRYPOINT ["poetry", "run", "python3", "-m", "src.api"]
