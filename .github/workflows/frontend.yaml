@@ -38,14 +38,9 @@ jobs:
             node_modules-${{ matrix.os }}-${{ matrix.node-version }}-${{
             hashFiles('package-lock.json') }}
 
+      ## Run prettier checks
+      - name: Prettier Check
+        run: npx prettier src/**/*.{ts,tsx} --write
+
       - name: Test Build
         run: npm run build
-
-      # This action messes up the node_modules folder so leave it at the end (not even needed to have this action)
-      - name: Check Prettier Lints/Formatting
-        uses: creyD/prettier_action@v4.3
-        with:
-          only_changed: True
-          dry: True
-          prettier_plugins: 'trivago/prettier-plugin-sort-imports'
-          prettier_options: --check src/**/*.{ts,tsx}
