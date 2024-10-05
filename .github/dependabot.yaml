@@ -3,23 +3,23 @@ updates:
 - package-ecosystem: github-actions
   directory: /
   schedule:
-    interval: weekly
+    interval: monthly
 - package-ecosystem: docker
   directory: /
   schedule:
-    interval: weekly
+    interval: monthly
 - package-ecosystem: pip
   directory: /backend
   schedule:
-    interval: weekly
+    interval: monthly
 - package-ecosystem: pip
   directory: /pipelines
   schedule:
-    interval: weekly
+    interval: monthly
 - package-ecosystem: npm
   directory: /frontend
   schedule:
-    interval: weekly
+    interval: yearly
   ignore:
     # For all deps
     - dependency-name: "*"
