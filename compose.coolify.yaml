@@ -1,6 +1,6 @@
 services:
   db:
-    image: arm64v8/postgres:17.0
+    image: kartoza/postgis:16-3.4
     environment:
       POSTGRES_DB: POSTGRES_DB
       POSTGRES_USER: POSTGRES_USER
@@ -50,5 +50,3 @@ services:
       POSTGRES_HOST: db
       STATIC_DIR: /static/build
       PORT: 8000
-    ports:
-      - "${APP_PORT}:8000"
