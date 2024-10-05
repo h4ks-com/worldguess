@@ -14,7 +14,7 @@ services:
     build:
       context: ./frontend
       dockerfile: ./Dockerfile
-    command: cp -r /frontend/build/ /static
+    command: cp -r /frontend/build/ /static; sleep infinity
     volumes:
       - ${STATIC_DIR_PATH}:/static
 
