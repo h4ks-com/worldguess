@@ -11,16 +11,18 @@ services:
   worldguess-frontend:
     image: worldguess-frontend:latest
     pull_policy: never
+    restart: no
     build:
       context: ./frontend
       dockerfile: ./Dockerfile
-    command: cp -r /frontend/build/ /static; sleep infinity
+    command: cp -r /frontend/build/ /static
     volumes:
       - ${STATIC_DIR_PATH}:/static
 
   worldguess-pipelines:
     image: worldguess-pipelines
     pull_policy: never
+    restart: no
     build:
       context: ./pipelines
       dockerfile: ./Dockerfile
