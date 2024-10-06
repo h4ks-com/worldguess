@@ -17,8 +17,13 @@ services:
     extends:
       file: compose.base.yaml
       service: worldguess-pipelines
+    depends_on:
+      - db
 
   worldguess-backend:
     extends:
       file: compose.base.yaml
       service: worldguess-backend
+    depends_on:
+      - worldguess-frontend
+      - db

@@ -17,8 +17,6 @@ services:
     build:
       context: ./pipelines
       dockerfile: ./Dockerfile
-    depends_on:
-      - db
     environment:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
@@ -32,9 +30,6 @@ services:
     build:
       context: ./backend
       dockerfile: ./Dockerfile
-    depends_on:
-      - worldguess-frontend
-      - db
     volumes:
       - ${STATIC_DIR_PATH}:/static
     environment:
