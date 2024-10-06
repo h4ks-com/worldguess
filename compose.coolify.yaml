@@ -12,11 +12,13 @@ services:
     extends:
       file: compose.base.yaml
       service: worldguess-frontend
+    restart: no
 
   worldguess-pipelines:
     extends:
       file: compose.base.yaml
       service: worldguess-pipelines
+    restart: no
 
   worldguess-backend:
     extends:
