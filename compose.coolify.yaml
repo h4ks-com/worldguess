@@ -12,15 +12,18 @@ services:
     extends:
       file: compose.base.yaml
       service: worldguess-frontend
-    restart: no
 
   worldguess-pipelines:
     extends:
       file: compose.base.yaml
       service: worldguess-pipelines
-    restart: no
+    depends_on:
+      - db
 
   worldguess-backend:
     extends:
       file: compose.base.yaml
       service: worldguess-backend
+    depends_on:
+      - worldguess-frontend
+      - db

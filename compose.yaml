@@ -17,10 +17,13 @@ services:
     extends:
       file: compose.base.yaml
       service: worldguess-pipelines
+    depends_on:
+      - db
 
   worldguess-backend:
     extends:
       file: compose.base.yaml
       service: worldguess-backend
-    ports:
-      - "${APP_PORT}:8000"
+    depends_on:
+      - worldguess-frontend
+      - db
