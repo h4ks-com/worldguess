@@ -7,6 +7,13 @@ services:
       POSTGRES_PASS: ${POSTGRES_PASSWORD}
     volumes:
       - ${POSTGRES_DB_PATH}:/var/lib/postgresql
+    ports:
+      - "5432:5432"
+
+  memcached:
+    extends:
+      file: compose.base.yaml
+      service: memcached
 
   worldguess-frontend:
     extends:
@@ -19,6 +26,7 @@ services:
       service: worldguess-pipelines
     depends_on:
       - db
+      - memcached
 
   worldguess-backend:
     extends:
@@ -27,3 +35,4 @@ services:
     depends_on:
       - worldguess-frontend
       - db
+      - memcached

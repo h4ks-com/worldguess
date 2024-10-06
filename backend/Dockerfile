@@ -19,4 +19,4 @@ FROM base as dev
 WORKDIR /backend
 COPY . /backend
 
-ENTRYPOINT ["poetry", "run", "python3", "-m", "src.api"]
+ENTRYPOINT ["poetry", "run", "python3", "-m", "worldguess.api"]

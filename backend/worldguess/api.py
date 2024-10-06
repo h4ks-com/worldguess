@@ -31,9 +31,7 @@ api.include_router(main_router)
 
 static_dir = settings.STATIC_DIR
 if not os.path.exists(static_dir):
-    print(
-        f"Static directory {static_dir} does not exist, make sure to build the frontend first with `npm run build`"
-    )
+    print(f"Static directory {static_dir} does not exist, make sure to build the frontend first with `npm run build`")
     exit(1)
 
 api.mount("", StaticFiles(directory=static_dir), name="static")
@@ -47,7 +45,7 @@ if __name__ == "__main__":
         logging.basicConfig(level=logging.DEBUG)
 
     uvicorn.run(
-        "src.api:api",
+        "worldguess.api:api",
         host=settings.HOST,
         port=settings.PORT,
         reload=settings.RELOAD,

@@ -8,14 +8,16 @@ ENV POETRY_NO_INTERACTION=1 \
     POETRY_VIRTUALENVS_CREATE=1 \
     POETRY_CACHE_DIR=/tmp/poetry_cache
 
-WORKDIR /pipeline
-COPY ./pyproject.toml /poetry.lock ./
+WORKDIR /pipelines
+COPY ./pipelines/pyproject.toml ./pipelines/poetry.lock ./
 RUN touch README.md 
 RUN poetry install --without dev --no-root
 RUN rm -rf $POETRY_CACHE_DIR
 
 FROM base as dev
-WORKDIR /pipeline
-COPY . /pipeline
+WORKDIR /pipelines
+COPY ./pipelines /pipelines
+RUN rm -rf /pipelines/backend
+COPY ./backend /pipelines/backend
 
 CMD ["./start.sh"]

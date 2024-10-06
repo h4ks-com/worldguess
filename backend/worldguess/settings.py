@@ -2,6 +2,8 @@ from functools import lru_cache
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+from .constants import PIPELINE_READYNESS_KEY
+
 
 class Settings(BaseSettings):
     HOST: str = "0.0.0.0"
@@ -9,10 +11,12 @@ class Settings(BaseSettings):
     RELOAD: bool = False
     DEBUG: bool = False
     STATIC_DIR: str = "./static"
-    POSTGRES_DB: str
-    POSTGRES_USER: str
-    POSTGRES_PASSWORD: str
+    POSTGRES_DB: str = "worldguess"
+    POSTGRES_USER: str = "worldguess"
+    POSTGRES_PASSWORD: str = "worldguess"
     POSTGRES_HOST: str = "localhost"
+    PIPELINE_READYNESS_KEY: str = PIPELINE_READYNESS_KEY
+    MEMCACHE_SERVER: str = "localhost"
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",

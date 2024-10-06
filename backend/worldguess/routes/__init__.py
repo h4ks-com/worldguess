@@ -8,5 +8,6 @@ main_router = APIRouter()
 
 v1_router.include_router(checks_router)
 main_router.include_router(app_router)
+main_router.include_router(v1_router)
 
 __all__ = ["main_router"]

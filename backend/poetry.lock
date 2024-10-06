@@ -437,6 +437,17 @@ files = [
 cli = ["click (>=5.0)"]
 
 [[package]]
+name = "python-memcached"
+version = "1.62"
+description = "Pure python memcached client"
+optional = false
+python-versions = "*"
+files = [
+    {file = "python-memcached-1.62.tar.gz", hash = "sha256:0285470599b7f593fbf3bec084daa1f483221e68c1db2cf1d846a9f7c2655103"},
+    {file = "python_memcached-1.62-py2.py3-none-any.whl", hash = "sha256:1bdd8d2393ff53e80cd5e9442d750e658e0b35c3eebb3211af137303e3b729d1"},
+]
+
+[[package]]
 name = "ruff"
 version = "0.6.9"
 description = "An extremely fast Python linter and code formatter, written in Rust."
@@ -610,4 +621,4 @@ standard = ["colorama (>=0.4)", "httptools (>=0.5.0)", "python-dotenv (>=0.13)",
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "79abe7562f42816ab1dde5f8b3132f9d209bce8320fa1ca06dc38c89dcae8e10"
+content-hash = "7bdae83ea4dcc33a65d0cf8a00c991d906c31ee0f191b81fd8ce7f247c9a024e"

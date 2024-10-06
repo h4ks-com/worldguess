@@ -1,4 +1,9 @@
 services:
+  memcached:
+    image: memcached:1.6.31
+    ports:
+      - "11211:11211"
+
   worldguess-frontend:
     image: worldguess-frontend:latest
     pull_policy: never
@@ -15,14 +20,15 @@ services:
     pull_policy: never
     restart: no
     build:
-      context: ./pipelines
-      dockerfile: ./Dockerfile
+      context: ./
+      dockerfile: ./pipelines/Dockerfile
     environment:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_PORT: 5432
       POSTGRES_HOST: db
+      MEMCACHE_SERVER: memcached
 
   worldguess-backend:
     image: worldguess-backend:latest
@@ -38,5 +44,6 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_HOST: db
       POSTGRES_PORT: 5432
+      MEMCACHE_SERVER: memcached
       STATIC_DIR: /static/build
       PORT: 8000
