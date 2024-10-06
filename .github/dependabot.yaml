@@ -19,7 +19,7 @@ updates:
 - package-ecosystem: npm
   directory: /frontend
   schedule:
-    interval: yearly
+    interval: monthly
   ignore:
     # For all deps
     - dependency-name: "*"
