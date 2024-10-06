@@ -17,7 +17,7 @@ geoalchemy2 = "^0.15.2"
 
 [tool.poetry.group.dev.dependencies]
 mypy = "^1.11.2"
-ruff = "^0.6.5"
+ruff = "^0.6.9"
 
 [build-system]
 requires = ["poetry-core"]
