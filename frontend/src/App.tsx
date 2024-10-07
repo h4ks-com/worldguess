@@ -1,95 +1,55 @@
-import type {FeatureCollection} from 'geojson';
-import 'maplibre-gl/dist/maplibre-gl.css';
-import * as React from 'react';
-import Map, {Layer, Source} from 'react-map-gl/maplibre';
-import type {CircleLayer, FillLayer, LineLayer} from 'react-map-gl/maplibre';
+import React from 'react';
 
-const geojson: FeatureCollection = {
-  type: 'FeatureCollection',
-  features: [
-    {
-      type: 'Feature',
-      geometry: {type: 'Point', coordinates: [-122.4, 37.8]},
-      properties: {},
-    },
-  ],
-};
+import './App.css';
+import {ApiClient, Status} from './api';
+import Main from './components/Main';
 
-const layerStyle: CircleLayer = {
-  id: 'point',
-  type: 'circle',
-  source: 'circle',
-  paint: {
-    'circle-radius': 20,
-    'circle-color': '#007cbfd0',
-  },
-};
+interface WaitingScreenProps {
+  isLoading: boolean;
+}
 
-const polygon: FeatureCollection = {
-  type: 'FeatureCollection',
-  features: [
-    {
-      type: 'Feature',
-      geometry: {
-        type: 'Polygon',
-        coordinates: [
-          [
-            [-122.4, 37.8],
-            [-122.5, 37.8],
-            [-122.5, 37.9],
-            [-122.4, 37.9],
-            [-122.4, 37.8],
-          ],
-        ],
-      },
-      properties: {},
-    },
-  ],
-};
-
-const polygonFill: FillLayer = {
-  id: 'data-fill',
-  type: 'fill',
-  source: 'polyFill',
-  paint: {
-    'fill-color': '#ff0',
-    'fill-opacity': 0.3,
-  },
-  filter: ['==', '$type', 'Polygon'],
-};
-
-const polygonLine: LineLayer = {
-  id: 'data-line',
-  type: 'line',
-  paint: {
-    'line-color': '#00f',
-    'line-width': 4,
-  },
-  source: 'poly',
-  filter: ['==', '$type', 'Polygon'],
+const WaitingScreen: React.FC<WaitingScreenProps> = ({isLoading}) => {
+  if (!isLoading) {
+    return null;
+  }
+  return (
+    <div className='waiting-screen'>
+      <h1>Loading...</h1>
+    </div>
+  );
 };
 
 function App() {
+  const apiClient = new ApiClient({
+    BASE: window.location.origin,
+  });
+  const [ready, setReady] = React.useState(false);
+  const intervalId = React.useRef<NodeJS.Timeout | null>(null);
+
+  React.useEffect(() => {
+    if (ready) {
+      if (intervalId.current) clearInterval(intervalId.current);
+      return;
+    }
+    intervalId.current = setInterval(() => {
+      apiClient.checks
+        .checkReadyV1HealthReadyGet()
+        .then((status: Status) => {
+          if (status.status === Status.status.READY) {
+            setReady(true);
+          }
+        })
+        .catch(e => {
+          console.error(e);
+        });
+    }, 2000);
+  }, [ready]);
+
   return (
-    <Map
-      initialViewState={{
-        longitude: -122.45,
-        latitude: 37.78,
-        zoom: 11,
-      }}
-      mapStyle='https://demotiles.maplibre.org/style.json'
-      style={{width: '100vw', height: '100vh'}}
-    >
-      <Source id='circle' type='geojson' data={geojson}>
-        <Layer {...layerStyle} />
-      </Source>
-      <Source id='data-line' type='geojson' data={polygon}>
-        <Layer {...polygonLine} />
-      </Source>
-      <Source id='data-fill' type='geojson' data={polygon}>
-        <Layer {...polygonFill} />
-      </Source>
-    </Map>
+    <div>
+      <WaitingScreen isLoading={!ready} />
+      <Main />
+    </div>
   );
 }
 
