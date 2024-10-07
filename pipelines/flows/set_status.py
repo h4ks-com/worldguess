@@ -7,7 +7,7 @@ class Begin(Job):
     """Sets pending status in the cache."""
 
     def run(self):
-        if self.cache.set(PIPELINE_READYNESS_KEY, "pending"):
+        if self.cache_set(PIPELINE_READYNESS_KEY, "pending"):
             return JobStatus.SUCCESS
         return JobStatus.FAILURE
 
@@ -16,6 +16,6 @@ class End(Job):
     """Sets done status in the cache."""
 
     def run(self):
-        if self.cache.set(PIPELINE_READYNESS_KEY, "done"):
+        if self.cache_set(PIPELINE_READYNESS_KEY, "done"):
             return JobStatus.SUCCESS
         return JobStatus.FAILURE

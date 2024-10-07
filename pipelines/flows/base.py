@@ -1,5 +1,6 @@
 import abc
 import asyncio
+import logging
 import os
 import time
 from contextlib import contextmanager
@@ -7,7 +8,7 @@ from enum import StrEnum, auto
 from multiprocessing import Process, Queue
 from typing import Generator, Literal
 
-import memcache
+import pymemcache
 from dotenv import load_dotenv
 from sqlalchemy import Connection, Engine, create_engine
 from sqlalchemy.orm import Session, sessionmaker
@@ -33,7 +34,7 @@ class Job(abc.ABC):
         self.dependencies = dependencies or []
         self.name = name
         self.status = JobStatus.PENDING
-        self.cache = memcache.Client([os.getenv("MEMCACHE_SERVER", "localhost")])
+        self.cache = pymemcache.Client(os.getenv("MEMCACHE_SERVER", "localhost"))
         self.engine: Engine | None = None
 
     def can_run(self) -> bool:
@@ -61,30 +62,32 @@ class Job(abc.ABC):
             await asyncio.sleep(2)
             if self.dependency_failed():
                 self.status = JobStatus.CANCELLED
-                return self.status
-
-        queue: Queue = Queue()
-        process = Process(target=self._wrap_run, args=(queue,))
-        process.start()
-        start = time.time()
-        while process.is_alive() and time.time() - start < TIMEOUT:
-            await asyncio.sleep(1)
-
-        if process.is_alive():
-            process.terminate()
-            self.status = JobStatus.TIMEOUT
+                break
         else:
-            self.status = queue.get()
+            logging.info(f"Running '{self.name}'")
+            queue: Queue = Queue()
+            process = Process(target=self._wrap_run, args=(queue,))
+            process.start()
+            start = time.time()
+            while process.is_alive() and time.time() - start < TIMEOUT:
+                await asyncio.sleep(1)
 
+            if process.is_alive():
+                process.terminate()
+                self.status = JobStatus.TIMEOUT
+            else:
+                self.status = queue.get()
+
+        logging.info(f"'{self.name}' finished with status {self.status}")
         return self.status
 
-    def cache_set(self, key: str, value: any) -> None:
+    def cache_set(self, key: str, value: any) -> bool | None:
         """Set a key in the cache."""
-        self.cache.set(key, value)
+        return self.cache.set(key, value.encode())
 
     def cache_get(self, key: str) -> any:
         """Get a key from the cache."""
-        return self.cache.get(key)
+        return self.cache.get(key).decode()
 
     def create_engine(self) -> None:
         """Create a database engine."""

@@ -1,8 +1,6 @@
 services:
   memcached:
     image: memcached:1.6.31
-    ports:
-      - "11211:11211"
 
   worldguess-frontend:
     image: worldguess-frontend:latest

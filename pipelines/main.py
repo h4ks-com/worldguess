@@ -18,7 +18,7 @@ async def main():
     if not all(status == JobStatus.SUCCESS for status in status):
         logging.error("Some flows failed")
         for flow, status in zip(flows, status):
-            logging.error(f"{flow.name} failed with status {status}")
+            logging.error(f"'{flow.name}' failed with status {status}")
         return
 
     logging.info("All flows completed successfully")

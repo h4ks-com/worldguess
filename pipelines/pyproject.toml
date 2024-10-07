@@ -9,9 +9,9 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.12"
 sqlalchemy = "^2.0.35"
-python-memcached = "^1.62"
 python-dotenv = "^1.0.1"
 psycopg2-binary = "^2.9.9"
+pymemcache = "^4.0.0"
 
 [tool.poetry.group.dev.dependencies]
 mypy = "^1.11.2"

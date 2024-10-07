@@ -1,7 +1,7 @@
-import memcache
+import pymemcache
 
 from .settings import get_settings
 
 
-def memcached() -> memcache.Client:
-    return memcache.Client(get_settings().MEMCACHE_SERVER)
+def memcached() -> pymemcache.Client:
+    return pymemcache.Client(get_settings().MEMCACHE_SERVER)

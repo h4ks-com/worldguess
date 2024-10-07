@@ -1,7 +1,8 @@
 from typing import Annotated, Literal
 
-import memcache
+import pymemcache
 from fastapi import APIRouter, Depends
+from pydantic import BaseModel
 
 from worldguess.dependencies import memcached
 from worldguess.settings import get_settings
@@ -14,11 +15,19 @@ async def check_health():
     return {"status": "ok"}
 
 
-@router.get("/ready")
+class Status(BaseModel):
+    status: Literal["ready", "not ready"]
+    pipeline_status: str | None = None
+
+
+@router.get("/ready", response_model=Status)
 async def check_ready(
-    cache: Annotated[memcache.Client, Depends(memcached)],
-) -> dict[Literal["status"], Literal["ready", "not ready"]]:
-    status = cache.get(get_settings().PIPELINE_READYNESS_KEY)
+    cache: Annotated[pymemcache.Client, Depends(memcached)],
+) -> Status:
+    status = cache.get(get_settings().PIPELINE_READYNESS_KEY).decode()
     if status != "done":
-        return {"status": "not ready"}
-    return {"status": "ready"}
+        return Status(
+            status="not ready",
+            pipeline_status=status,
+        )
+    return Status(status="ready", pipeline_status=status)
