@@ -1,6 +1,7 @@
 import logging
 import os
 from contextlib import asynccontextmanager
+from typing import AsyncGenerator
 
 import uvicorn
 from fastapi import FastAPI
@@ -11,7 +12,7 @@ from .settings import get_settings
 
 
 @asynccontextmanager
-async def lifespan(api: FastAPI):
+async def lifespan(api: FastAPI) -> AsyncGenerator[None, None]:
     try:
         yield
     finally:

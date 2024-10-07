@@ -6,7 +6,7 @@ import time
 from contextlib import contextmanager
 from enum import StrEnum, auto
 from multiprocessing import Process, Queue
-from typing import Generator, Literal
+from typing import Any, Generator, Literal
 
 import pymemcache
 from dotenv import load_dotenv
@@ -25,6 +25,9 @@ class JobStatus(StrEnum):
     FAILURE = auto()
     CANCELLED = auto()
     TIMEOUT = auto()
+
+
+RunStatusType = Literal[JobStatus.SUCCESS, JobStatus.FAILURE]
 
 
 class Job(abc.ABC):
@@ -48,10 +51,10 @@ class Job(abc.ABC):
         )
 
     @abc.abstractmethod
-    def run(self) -> Literal[JobStatus.SUCCESS, JobStatus.FAILURE]:
+    def run(self) -> RunStatusType:
         """Actual implementation."""
 
-    def _wrap_run(self, queue: Queue) -> None:
+    def _wrap_run(self, queue: "Queue[JobStatus]") -> None:
         result = self.run()
         queue.put(result)
 
@@ -65,7 +68,7 @@ class Job(abc.ABC):
                 break
         else:
             logging.info(f"Running '{self.name}'")
-            queue: Queue = Queue()
+            queue: "Queue[JobStatus]" = Queue()
             process = Process(target=self._wrap_run, args=(queue,))
             process.start()
             start = time.time()
@@ -81,11 +84,11 @@ class Job(abc.ABC):
         logging.info(f"'{self.name}' finished with status {self.status}")
         return self.status
 
-    def cache_set(self, key: str, value: any) -> bool | None:
+    def cache_set(self, key: str, value: Any) -> bool | None:
         """Set a key in the cache."""
-        return self.cache.set(key, value.encode())
+        return self.cache.set(key, value.encode())  # type: ignore
 
-    def cache_get(self, key: str) -> any:
+    def cache_get(self, key: str) -> Any:
         """Get a key from the cache."""
         return self.cache.get(key).decode()
 
