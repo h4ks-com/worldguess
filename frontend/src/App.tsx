@@ -43,7 +43,7 @@ function App() {
           console.error(e);
         });
     }, 2000);
-  }, [ready]);
+  }, [ready, apiClient.checks]);
 
   return (
     <div>
