@@ -10,7 +10,7 @@ readme = "README.md"
 python = "^3.12"
 sqlalchemy = "^2.0.35"
 python-dotenv = "^1.0.1"
-psycopg2-binary = "^2.9.9"
+psycopg2-binary = "^2.9.10"
 pymemcache = "^4.0.0"
 
 [tool.poetry.group.dev.dependencies]
