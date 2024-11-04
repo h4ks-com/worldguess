@@ -1,27 +1,51 @@
 version: 2
 updates:
-- package-ecosystem: github-actions
-  directory: /
-  schedule:
-    interval: monthly
-- package-ecosystem: docker
-  directory: /
-  schedule:
-    interval: monthly
-- package-ecosystem: pip
-  directory: /backend
-  schedule:
-    interval: monthly
-- package-ecosystem: pip
-  directory: /pipelines
-  schedule:
-    interval: monthly
-- package-ecosystem: npm
-  directory: /frontend
-  schedule:
-    interval: monthly
-  ignore:
-    # For all deps
-    - dependency-name: "*"
-      # ignore all major updates
-      update-types: ["version-update:semver-major"]
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    groups:
+      "all-github-actions":
+        patterns:
+          - "*"
+  
+  - package-ecosystem: docker
+    directory: /
+    schedule:
+      interval: monthly
+    groups:
+      "all-docker-updates":
+        patterns:
+          - "*"
+
+  - package-ecosystem: pip
+    directory: /backend
+    schedule:
+      interval: monthly
+    groups:
+      "all-pip-backend-updates":
+        patterns:
+          - "*"
+
+  - package-ecosystem: pip
+    directory: /pipelines
+    schedule:
+      interval: monthly
+    groups:
+      "all-pip-pipelines-updates":
+        patterns:
+          - "*"
+
+  - package-ecosystem: npm
+    directory: /frontend
+    schedule:
+      interval: monthly
+    ignore:
+      # For all dependencies
+      - dependency-name: "*"
+        # ignore all major updates
+        update-types: ["version-update:semver-major"]
+    groups:
+      "all-npm-updates":
+        patterns:
+          - "*"
