@@ -8,8 +8,8 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.12"
-fastapi = "^0.115.10"
-sqlalchemy = "^2.0.38"
+fastapi = "^0.115.12"
+sqlalchemy = "^2.0.40"
 uvicorn = "^0.34.0"
 pydantic-settings = "^2.8.1"
 pydantic-geojson = "^0.2.0"
@@ -18,7 +18,7 @@ pymemcache = "^4.0.0"
 
 [tool.poetry.group.dev.dependencies]
 mypy = "^1.15.0"
-ruff = "^0.9.9"
+ruff = "^0.11.2"
 
 [build-system]
 requires = ["poetry-core"]
