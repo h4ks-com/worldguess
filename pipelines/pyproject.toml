@@ -15,7 +15,7 @@ pymemcache = "^4.0.0"
 
 [tool.poetry.group.dev.dependencies]
 mypy = "^1.15.0"
-ruff = "^0.11.2"
+ruff = "^0.11.7"
 
 [build-system]
 requires = ["poetry-core"]
