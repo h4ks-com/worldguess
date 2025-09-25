@@ -94,7 +94,7 @@ Worldguess is a geography-based guessing game where players estimate the populat
 - **Maps**: MapLibre GL JS for interactive mapping
 
 ### Development Tools
-- **Package Management**: Poetry (Python), npm (JavaScript)
+- **Package Management**: uv (Python), npm (JavaScript)
 - **Code Quality**: Ruff (Python linting/formatting), Prettier (JS/TS)
 - **Type Checking**: MyPy (Python), TypeScript (Frontend)
 - **API Generation**: OpenAPI → TypeScript client generation
@@ -146,7 +146,7 @@ docker compose up
 
 ### API Development Cycle
 1. Modify FastAPI endpoints in backend
-2. Generate OpenAPI spec: `poetry run python generate_openapi_spec.py`
+2. Generate OpenAPI spec: `uv run python generate_openapi_spec.py`
 3. Regenerate frontend client: `npm run api`
 4. Frontend gains type-safe access to new endpoints
 

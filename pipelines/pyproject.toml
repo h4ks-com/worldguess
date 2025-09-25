@@ -1,25 +1,27 @@
-[tool.poetry]
+[project]
 name = "worldguess"
 version = "0.1.0"
 description = ""
-authors = ["Matheus Fillipe <matheusfillipeag@gmail.com>"]
-license = "MIT"
+authors = [{ name = "Matheus Fillipe", email = "matheusfillipeag@gmail.com" }]
+requires-python = ">=3.12"
 readme = "README.md"
+license = "MIT"
+dependencies = [
+    "sqlalchemy>=2.0.42,<3",
+    "python-dotenv>=1.1.1,<2",
+    "psycopg2-binary>=2.9.10,<3",
+    "pymemcache>=4.0.0,<5",
+]
 
-[tool.poetry.dependencies]
-python = "^3.12"
-sqlalchemy = "^2.0.42"
-python-dotenv = "^1.1.1"
-psycopg2-binary = "^2.9.10"
-pymemcache = "^4.0.0"
-
-[tool.poetry.group.dev.dependencies]
-mypy = "^1.17.1"
-ruff = "^0.12.7"
+[dependency-groups]
+dev = [
+    "mypy>=1.17.1,<2",
+    "ruff>=0.12.7,<0.13",
+]
 
 [build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
 [tool.docformatter]
 wrap-summaries = 120

@@ -1,18 +1,16 @@
 FROM python:3.12.2-slim-bullseye as base
 RUN apt-get update && apt-get install -y curl gcc python3-dev
-RUN pip install --no-cache-dir poetry==1.8.3
-RUN poetry --version
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
-ENV POETRY_NO_INTERACTION=1 \
-    POETRY_VIRTUALENVS_IN_PROJECT=1 \
-    POETRY_VIRTUALENVS_CREATE=1 \
-    POETRY_CACHE_DIR=/tmp/poetry_cache
+ENV UV_COMPILE_BYTECODE=1 \
+    UV_LINK_MODE=copy \
+    UV_CACHE_DIR=/tmp/uv_cache
 
 WORKDIR /pipelines
-COPY ./pipelines/pyproject.toml ./pipelines/poetry.lock ./
-RUN touch README.md 
-RUN poetry install --without dev --no-root
-RUN rm -rf $POETRY_CACHE_DIR
+COPY ./pipelines/pyproject.toml ./pipelines/uv.lock ./
+RUN touch README.md
+RUN uv sync --frozen --no-dev
+RUN rm -rf $UV_CACHE_DIR
 
 FROM base as dev
 WORKDIR /pipelines
