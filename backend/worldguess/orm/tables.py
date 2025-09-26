@@ -21,3 +21,10 @@ class PopulationCell(Base):
     population_density: Mapped[float] = mapped_column(Float)
     area_sqkm: Mapped[float] = mapped_column(Float)
     geometry: Mapped[WKBElement] = mapped_column(Geometry(geometry_type="POLYGON", srid=4326))
+
+
+class DataVersion(Base):
+    __tablename__ = "data_version"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    version_hash: Mapped[str] = mapped_column(String, unique=True)
