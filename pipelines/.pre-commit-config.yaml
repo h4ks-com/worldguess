@@ -26,3 +26,4 @@ repos:
     hooks:
     - id: mypy
       args: [--strict, --ignore-missing-imports, --disable-error-code, misc]
+      additional_dependencies: [types-requests]

@@ -2,12 +2,14 @@ import asyncio
 import logging
 
 from flows.base import JobStatus
+from flows.load_population import LoadPopulation
 from flows.set_status import Begin, End
 
 begin = Begin("begin")
-end = End("end", [begin])
+load_population = LoadPopulation("load_population", [begin])
+end = End("end", [load_population])
 
-flows = [begin, end]
+flows = [begin, load_population, end]
 
 
 logging.basicConfig(level=logging.INFO)

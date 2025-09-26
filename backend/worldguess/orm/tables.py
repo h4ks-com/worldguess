@@ -1,5 +1,5 @@
 from geoalchemy2 import Geometry, WKBElement
-from sqlalchemy import ForeignKey, Integer, String
+from sqlalchemy import Float, String
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 
@@ -11,14 +11,13 @@ class Countries(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(String)
-
     geometry: Mapped[WKBElement] = mapped_column(Geometry(geometry_type="POLYGON"))
 
 
-class Population(Base):
-    __tablename__ = "population"
+class PopulationCell(Base):
+    __tablename__ = "population_cells"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    country_id: Mapped[int] = mapped_column(ForeignKey("countries.id"))
-    population: Mapped[int] = mapped_column(Integer)
-    geometry: Mapped[WKBElement] = mapped_column(Geometry(geometry_type="POINT"))
+    population_density: Mapped[float] = mapped_column(Float)
+    area_sqkm: Mapped[float] = mapped_column(Float)
+    geometry: Mapped[WKBElement] = mapped_column(Geometry(geometry_type="POLYGON", srid=4326))
