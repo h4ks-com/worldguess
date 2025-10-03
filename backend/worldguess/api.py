@@ -5,6 +5,7 @@ from typing import AsyncGenerator
 
 import uvicorn
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
 from .routes import main_router
@@ -26,6 +27,15 @@ api = FastAPI(
     description="Simple API for fetching geojson and map tiles",
     version="0.0.1",
     lifespan=lifespan,
+)
+
+# Add CORS middleware
+api.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 api.include_router(main_router)

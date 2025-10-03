@@ -2,11 +2,10 @@ import abc
 import asyncio
 import logging
 import os
-import time
 from contextlib import contextmanager
 from enum import StrEnum, auto
-from multiprocessing import Process, Queue
-from typing import Any, Generator, Literal
+from multiprocessing import Queue
+from typing import Generator, Literal
 
 import pymemcache
 from dotenv import load_dotenv
@@ -15,7 +14,7 @@ from sqlalchemy.orm import Session, sessionmaker
 
 load_dotenv()
 
-TIMEOUT = int(os.getenv("JOB_TIMEOUT", 60))
+TIMEOUT = int(os.getenv("JOB_TIMEOUT", 1800))  # 30 minutes for large raster processing
 
 
 class JobStatus(StrEnum):
@@ -37,8 +36,15 @@ class Job(abc.ABC):
         self.dependencies = dependencies or []
         self.name = name
         self.status = JobStatus.PENDING
-        self.cache = pymemcache.Client(os.getenv("MEMCACHE_SERVER", "localhost"))
         self.engine: Engine | None = None
+        self._cache: pymemcache.Client | None = None
+
+    @property
+    def cache(self) -> pymemcache.Client:
+        """Lazy-initialized memcached client."""
+        if self._cache is None:
+            self._cache = pymemcache.Client(os.getenv("MEMCACHE_SERVER", "localhost"))
+        return self._cache
 
     def can_run(self) -> bool:
         """Check if all dependencies have run successfully."""
@@ -59,8 +65,7 @@ class Job(abc.ABC):
         queue.put(result)
 
     async def __call__(self) -> JobStatus:
-        """Waits for dependencies to be ready and run the job in a separate
-        process."""
+        """Waits for dependencies to be ready and run the job."""
         while not self.can_run():
             await asyncio.sleep(2)
             if self.dependency_failed():
@@ -68,29 +73,22 @@ class Job(abc.ABC):
                 break
         else:
             logging.info(f"Running '{self.name}'")
-            queue: "Queue[JobStatus]" = Queue()
-            process = Process(target=self._wrap_run, args=(queue,))
-            process.start()
-            start = time.time()
-            while process.is_alive() and time.time() - start < TIMEOUT:
-                await asyncio.sleep(1)
-
-            if process.is_alive():
-                process.terminate()
-                self.status = JobStatus.TIMEOUT
-            else:
-                self.status = queue.get()
+            self.status = self.run()
 
         logging.info(f"'{self.name}' finished with status {self.status}")
         return self.status
 
-    def cache_set(self, key: str, value: Any) -> bool | None:
+    def cache_set(self, key: str, value: str) -> bool:
         """Set a key in the cache."""
-        return self.cache.set(key, value.encode())  # type: ignore
+        result = self.cache.set(key, value.encode())
+        return result is not None and result
 
-    def cache_get(self, key: str) -> Any:
+    def cache_get(self, key: str) -> str | None:
         """Get a key from the cache."""
-        return self.cache.get(key).decode()
+        result = self.cache.get(key)
+        if result is None:
+            return None
+        return result.decode() if isinstance(result, bytes) else result
 
     def create_engine(self) -> None:
         """Create a database engine."""

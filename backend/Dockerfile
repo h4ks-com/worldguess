@@ -10,11 +10,11 @@ WORKDIR /backend
 
 COPY ./pyproject.toml ./uv.lock ./
 RUN touch README.md
-RUN uv sync --frozen --no-dev
-RUN rm -rf $UV_CACHE_DIR
+RUN uv sync --frozen --no-dev --no-install-project
 
 FROM base as dev
 WORKDIR /backend
 COPY . /backend
+RUN uv sync --frozen
 
 ENTRYPOINT ["uv", "run", "python3", "-m", "worldguess.api"]

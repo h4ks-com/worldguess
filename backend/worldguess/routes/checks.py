@@ -24,7 +24,14 @@ class Status(BaseModel):
 async def check_ready(
     cache: Annotated[pymemcache.Client, Depends(memcached)],
 ) -> Status:
-    status = cache.get(get_settings().PIPELINE_READYNESS_KEY).decode()
+    cached_status = cache.get(get_settings().PIPELINE_READYNESS_KEY)
+    if cached_status is None:
+        return Status(
+            status="not ready",
+            pipeline_status="pipeline not started",
+        )
+
+    status = cached_status.decode()
     if status != "done":
         return Status(
             status="not ready",

@@ -15,8 +15,9 @@ class Settings(BaseSettings):
     POSTGRES_USER: str = "worldguess"
     POSTGRES_PASSWORD: str = "worldguess"
     POSTGRES_HOST: str = "localhost"
+    POSTGRES_PORT: int = 5432
     PIPELINE_READYNESS_KEY: str = PIPELINE_READYNESS_KEY
-    MEMCACHE_SERVER: str = "localhost"
+    MEMCACHE_SERVER: str = "memcached"
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",

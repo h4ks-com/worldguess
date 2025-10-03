@@ -1,5 +1,5 @@
-from geoalchemy2 import Geometry, WKBElement
-from sqlalchemy import Float, String
+from geoalchemy2 import Geometry, Raster, WKBElement
+from sqlalchemy import String
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 
@@ -14,13 +14,11 @@ class Countries(Base):
     geometry: Mapped[WKBElement] = mapped_column(Geometry(geometry_type="POLYGON"))
 
 
-class PopulationCell(Base):
-    __tablename__ = "population_cells"
+class PopulationRaster(Base):
+    __tablename__ = "population_raster"
 
-    id: Mapped[int] = mapped_column(primary_key=True)
-    population_density: Mapped[float] = mapped_column(Float)
-    area_sqkm: Mapped[float] = mapped_column(Float)
-    geometry: Mapped[WKBElement] = mapped_column(Geometry(geometry_type="POLYGON", srid=4326))
+    rid: Mapped[int] = mapped_column(primary_key=True)
+    rast: Mapped[bytes] = mapped_column(Raster)
 
 
 class DataVersion(Base):

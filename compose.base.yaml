@@ -20,6 +20,8 @@ services:
     build:
       context: ./
       dockerfile: ./pipelines/Dockerfile
+    volumes:
+      - ${WORLDPOP_CACHE_PATH}:/tmp/worldguess_cache
     environment:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
