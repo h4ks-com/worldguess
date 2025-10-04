@@ -17,7 +17,7 @@ export const useURLSync = (gameState: GameState) => {
           latitude: gameState.latitude,
           longitude: gameState.longitude,
           radius_km: gameState.radiusKm,
-          difficulty: gameState.difficulty,
+          size_class: gameState.sizeClass,
         });
 
         // Build URL with gameId so it opens as a game
@@ -26,8 +26,8 @@ export const useURLSync = (gameState: GameState) => {
         url.searchParams.set('lon', gameState.longitude.toFixed(6));
         url.searchParams.set('radius', gameState.radiusKm.toFixed(2));
         url.searchParams.set('gameId', data.game_id);
-        if (gameState.difficulty) {
-          url.searchParams.set('difficulty', gameState.difficulty);
+        if (gameState.sizeClass) {
+          url.searchParams.set('size_class', gameState.sizeClass);
         }
 
         navigator.clipboard.writeText(url.toString());
@@ -47,7 +47,7 @@ export const useURLSync = (gameState: GameState) => {
     gameState.latitude,
     gameState.longitude,
     gameState.radiusKm,
-    gameState.difficulty,
+    gameState.sizeClass,
   ]);
 
   return {shareGame};

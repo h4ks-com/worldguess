@@ -5,7 +5,7 @@
 /* tslint:disable */
 
 /* eslint-disable */
-import type {DifficultyLevel} from './DifficultyLevel';
+import type {SizeClass} from './SizeClass';
 
 /**
  * Result of population calculation within a circle.
@@ -15,5 +15,5 @@ export type PopulationResult = {
   latitude: number;
   longitude: number;
   radius_km: number;
-  difficulty?: DifficultyLevel | null;
+  size_class?: SizeClass | null;
 };

@@ -1,6 +1,6 @@
-import {DifficultyLevel} from '../api/models/DifficultyLevel';
+import {SizeClass} from '../api/models/SizeClass';
 
-export type {DifficultyLevel};
+export type {SizeClass};
 export type GameMode = 'menu' | 'random' | 'design';
 export type MapLayer = 'default' | 'satellite';
 
@@ -9,7 +9,7 @@ export interface GameState {
   latitude: number;
   longitude: number;
   radiusKm: number;
-  difficulty: DifficultyLevel | null;
+  sizeClass: SizeClass | null;
   gameId: string | null;
   actualPopulation: number | null;
   userGuess: string;

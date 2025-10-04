@@ -283,17 +283,17 @@ export const GameUI: React.FC<GameUIProps> = ({
                 <h2 className='text-lg font-bold text-gray-800'>
                   How many people live inside the circle?
                 </h2>
-                {gameState.difficulty && (
+                {gameState.sizeClass && (
                   <span
                     className={`inline-block px-2 py-0.5 text-xs font-semibold rounded-full ${
-                      gameState.difficulty === 'regional'
+                      gameState.sizeClass === 'regional'
                         ? 'bg-green-100 text-green-700'
-                        : gameState.difficulty === 'country'
+                        : gameState.sizeClass === 'country'
                           ? 'bg-blue-100 text-blue-700'
                           : 'bg-purple-100 text-purple-700'
                     }`}
                   >
-                    {gameState.difficulty}
+                    {gameState.sizeClass}
                   </span>
                 )}
               </div>

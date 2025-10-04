@@ -1,6 +1,6 @@
 import {useEffect} from 'react';
 
-import {DifficultyLevel, GameState} from '../types/game';
+import {GameState, SizeClass} from '../types/game';
 
 interface UseGameFromURLProps {
   setGameState: (state: GameState | ((prev: GameState) => GameState)) => void;
@@ -20,7 +20,7 @@ export const useGameFromURL = ({
     const lat = params.get('lat');
     const lon = params.get('lon');
     const radius = params.get('radius');
-    const difficulty = params.get('difficulty') as DifficultyLevel | null;
+    const sizeClass = params.get('size_class') as SizeClass | null;
     const gameId = params.get('gameId');
 
     if (lat && lon && radius) {
@@ -38,7 +38,7 @@ export const useGameFromURL = ({
         latitude,
         longitude,
         radiusKm,
-        difficulty,
+        sizeClass,
         gameId,
       }));
 

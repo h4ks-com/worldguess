@@ -1,11 +1,11 @@
 import React from 'react';
 import Map from 'react-map-gl/maplibre';
 
-import {DifficultyLevel} from '../api/models/DifficultyLevel';
+import {SizeClass} from '../api/models/SizeClass';
 
 interface MenuScreenProps {
   isLoading: boolean;
-  onStartRandomGame: (difficulty: DifficultyLevel) => void;
+  onStartRandomGame: (sizeClass: SizeClass) => void;
   onStartDesignMode: () => void;
 }
 
@@ -77,11 +77,11 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
           <div className='space-y-6'>
             <div>
               <h2 className='text-lg font-semibold mb-3 text-gray-700'>
-                Choose Difficulty
+                Choose Dimension
               </h2>
               <div className='grid grid-cols-1 gap-3'>
                 <button
-                  onClick={() => onStartRandomGame(DifficultyLevel.REGIONAL)}
+                  onClick={() => onStartRandomGame(SizeClass.REGIONAL)}
                   disabled={isLoading}
                   className='px-6 py-4 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-xl hover:from-green-600 hover:to-emerald-600 transition-all font-semibold shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed'
                 >
@@ -91,7 +91,7 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
                   </div>
                 </button>
                 <button
-                  onClick={() => onStartRandomGame(DifficultyLevel.COUNTRY)}
+                  onClick={() => onStartRandomGame(SizeClass.COUNTRY)}
                   disabled={isLoading}
                   className='px-6 py-4 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-xl hover:from-blue-600 hover:to-indigo-600 transition-all font-semibold shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed'
                 >
@@ -101,7 +101,7 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
                   </div>
                 </button>
                 <button
-                  onClick={() => onStartRandomGame(DifficultyLevel.CONTINENTAL)}
+                  onClick={() => onStartRandomGame(SizeClass.CONTINENTAL)}
                   disabled={isLoading}
                   className='px-6 py-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl hover:from-purple-600 hover:to-pink-600 transition-all font-semibold shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed'
                 >

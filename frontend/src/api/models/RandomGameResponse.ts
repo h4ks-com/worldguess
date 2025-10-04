@@ -5,7 +5,7 @@
 /* tslint:disable */
 
 /* eslint-disable */
-import type {DifficultyLevel} from './DifficultyLevel';
+import type {SizeClass} from './SizeClass';
 
 /**
  * Response for random game generation.
@@ -15,6 +15,6 @@ export type RandomGameResponse = {
   latitude: number;
   longitude: number;
   radius_km: number;
-  difficulty?: DifficultyLevel | null;
+  size_class?: SizeClass | null;
   share_url: string;
 };

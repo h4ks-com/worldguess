@@ -2,7 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export enum DifficultyLevel {
+export enum SizeClass {
   REGIONAL = 'regional',
   COUNTRY = 'country',
   CONTINENTAL = 'continental',

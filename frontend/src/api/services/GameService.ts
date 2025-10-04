@@ -7,10 +7,10 @@
 /* eslint-disable */
 import type {BaseHttpRequest} from '../core/BaseHttpRequest';
 import type {CancelablePromise} from '../core/CancelablePromise';
-import type {DifficultyLevel} from '../models/DifficultyLevel';
 import type {GameConfig} from '../models/GameConfig';
 import type {PopulationResult} from '../models/PopulationResult';
 import type {RandomGameResponse} from '../models/RandomGameResponse';
+import type {SizeClass} from '../models/SizeClass';
 
 export class GameService {
   constructor(public readonly httpRequest: BaseHttpRequest) {}
@@ -36,19 +36,19 @@ export class GameService {
   }
   /**
    * Create Random Game
-   * Generate a random game with specified difficulty level.
-   * @param difficulty
+   * Generate a random game with specified size class.
+   * @param sizeClass
    * @returns RandomGameResponse Successful Response
    * @throws ApiError
    */
   public createRandomGameV1GameRandomPost(
-    difficulty: DifficultyLevel,
+    sizeClass: SizeClass,
   ): CancelablePromise<RandomGameResponse> {
     return this.httpRequest.request({
       method: 'POST',
       url: '/v1/game/random',
       query: {
-        difficulty: difficulty,
+        size_class: sizeClass,
       },
       errors: {
         422: `Validation Error`,

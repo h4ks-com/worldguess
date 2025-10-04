@@ -53,8 +53,8 @@ const Main: React.FC = () => {
   useGameFromURL({setGameState, setViewToCircle});
 
   const handleStartRandomGame = useCallback(
-    async (difficulty: string) => {
-      const newGameState = await startRandomGame(difficulty as any);
+    async (sizeClass: string) => {
+      const newGameState = await startRandomGame(sizeClass as any);
       if (newGameState) {
         setSliderValue(0);
         setMapLayer('default');
@@ -163,10 +163,10 @@ const Main: React.FC = () => {
   );
 
   const handleNext = useCallback(() => {
-    if (gameState.difficulty) {
-      handleStartRandomGame(gameState.difficulty);
+    if (gameState.sizeClass) {
+      handleStartRandomGame(gameState.sizeClass);
     }
-  }, [gameState.difficulty, handleStartRandomGame]);
+  }, [gameState.sizeClass, handleStartRandomGame]);
 
   const circleGeoJSON = createCircleGeoJSON(
     gameState.latitude,

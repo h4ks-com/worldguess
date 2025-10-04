@@ -1,14 +1,14 @@
 import {useCallback, useState} from 'react';
 
 import {apiClient} from '../api/client';
-import {DifficultyLevel, GameState, ToastState} from '../types/game';
+import {GameState, SizeClass, ToastState} from '../types/game';
 
 const initialGameState: GameState = {
   mode: 'menu',
   latitude: 0,
   longitude: 0,
   radiusKm: 10,
-  difficulty: null,
+  sizeClass: null,
   gameId: null,
   actualPopulation: null,
   userGuess: '',
@@ -40,7 +40,7 @@ export const useGameState = () => {
       latitude: 0,
       longitude: 0,
       radiusKm: 10,
-      difficulty: null,
+      sizeClass: null,
       gameId: null,
       actualPopulation: null,
       userGuess: '',
@@ -49,18 +49,18 @@ export const useGameState = () => {
   }, []);
 
   const startRandomGame = useCallback(
-    async (difficulty: DifficultyLevel) => {
+    async (sizeClass: SizeClass) => {
       setIsLoading(true);
       try {
         const data =
-          await apiClient.game.createRandomGameV1GameRandomPost(difficulty);
+          await apiClient.game.createRandomGameV1GameRandomPost(sizeClass);
 
         const newGameState = {
           mode: 'random' as const,
           latitude: data.latitude,
           longitude: data.longitude,
           radiusKm: data.radius_km,
-          difficulty: data.difficulty || null,
+          sizeClass: data.size_class || null,
           gameId: data.game_id,
           actualPopulation: null,
           userGuess: '',
@@ -74,8 +74,8 @@ export const useGameState = () => {
         url.searchParams.set('lat', data.latitude.toFixed(6));
         url.searchParams.set('lon', data.longitude.toFixed(6));
         url.searchParams.set('radius', data.radius_km.toFixed(2));
-        if (data.difficulty) {
-          url.searchParams.set('difficulty', data.difficulty);
+        if (data.size_class) {
+          url.searchParams.set('size_class', data.size_class);
         }
         url.searchParams.set('gameId', data.game_id);
         window.history.pushState({}, '', url);

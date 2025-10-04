@@ -3,7 +3,7 @@ from enum import Enum
 from pydantic import BaseModel, Field
 
 
-class DifficultyLevel(str, Enum):
+class SizeClass(str, Enum):
     REGIONAL = "regional"
     COUNTRY = "country"
     CONTINENTAL = "continental"
@@ -15,7 +15,7 @@ class GameConfig(BaseModel):
     latitude: float = Field(..., ge=-90, le=90)
     longitude: float = Field(..., ge=-180, le=180)
     radius_km: float = Field(..., gt=0)
-    difficulty: DifficultyLevel | None = None
+    size_class: SizeClass | None = None
 
 
 class PopulationResult(BaseModel):
@@ -25,7 +25,7 @@ class PopulationResult(BaseModel):
     latitude: float
     longitude: float
     radius_km: float
-    difficulty: DifficultyLevel | None = None
+    size_class: SizeClass | None = None
 
 
 class RandomGameResponse(BaseModel):
@@ -35,5 +35,5 @@ class RandomGameResponse(BaseModel):
     latitude: float
     longitude: float
     radius_km: float
-    difficulty: DifficultyLevel | None = None
+    size_class: SizeClass | None = None
     share_url: str
