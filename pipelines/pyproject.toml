@@ -22,7 +22,7 @@ dependencies = [
 [dependency-groups]
 dev = [
     "mypy>=1.17.1,<2",
-    "ruff>=0.12.7,<0.13",
+    "ruff>=0.12.7,<0.14",
     "types-requests>=2.32.4.20250913",
 ]
 
