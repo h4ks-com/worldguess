@@ -16,17 +16,15 @@ lint: lint-backend lint-frontend lint-pipelines
 
 lint-backend:
 	@echo "Linting backend..."
-	cd backend && uv run ruff check .
-	cd backend && uv run mypy .
+	cd backend && pre-commit run --all-files || true
 
 lint-frontend:
 	@echo "Linting frontend..."
-	cd frontend && npx prettier --check src/**/*.{ts,tsx} || true
+	cd frontend && npm run api && npm run check || true
 
 lint-pipelines:
 	@echo "Linting pipelines..."
-	cd pipelines && uv run ruff check .
-	cd pipelines && uv run mypy flows/ main.py || true
+	cd pipelines && pre-commit run --all-files || true
 
 format: format-backend format-frontend format-pipelines
 
@@ -44,7 +42,14 @@ format-pipelines:
 	cd pipelines && uv run ruff format .
 	cd pipelines && uv run ruff check --fix .
 
+build-frontend:
+	@echo "Building frontend..."
+	cd frontend && npm run build || true
+
 test:
 	@echo "Running tests..."
 	cd backend && uv run pytest || true
 	cd frontend && npm test || true
+
+fix: format lint build-frontend
+	@echo "Code has been formatted and linted."

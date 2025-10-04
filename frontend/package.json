@@ -25,6 +25,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "format": "prettier --write src/**/*.{ts,tsx}",
+    "check": "prettier --check src/**/*.{ts,tsx}",
     "api": "generate_api_client.sh"
   },
   "eslintConfig": {
