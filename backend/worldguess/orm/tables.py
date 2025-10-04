@@ -21,6 +21,13 @@ class PopulationRaster(Base):
     rast: Mapped[bytes] = mapped_column(Raster)
 
 
+class LandAreas(Base):
+    __tablename__ = "land_areas"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    geom: Mapped[WKBElement] = mapped_column(Geometry(geometry_type="MULTIPOLYGON", srid=4326))
+
+
 class DataVersion(Base):
     __tablename__ = "data_version"
 

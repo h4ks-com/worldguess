@@ -45,7 +45,7 @@ if not os.path.exists(static_dir):
     print(f"Static directory {static_dir} does not exist, make sure to build the frontend first with `npm run build`")
     exit(1)
 
-api.mount("", StaticFiles(directory=static_dir), name="static")
+api.mount("", StaticFiles(directory=static_dir, html=True), name="static")
 
 logging.getLogger("uvicorn.error").setLevel(logging.WARNING)
 

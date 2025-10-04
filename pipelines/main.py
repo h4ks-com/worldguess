@@ -3,18 +3,20 @@ import logging
 
 from flows.base import JobStatus
 from flows.data_version_check import should_skip_pipeline
+from flows.load_land_areas import LoadLandAreas
 from flows.load_population_raster import LoadPopulationRaster
 from flows.set_data_version import SetDataVersion
 from flows.set_status import Begin, End
 
-DATA_VERSION = "1"
+DATA_VERSION = "2"
 
 begin = Begin("begin")
-load_population = LoadPopulationRaster("load_population", [begin])
+load_land = LoadLandAreas("load_land_areas", [begin])
+load_population = LoadPopulationRaster("load_population", [load_land])
 set_data_version = SetDataVersion("set_data_version", [load_population], DATA_VERSION)
 end = End("end", [set_data_version])
 
-flows = [begin, load_population, set_data_version, end]
+flows = [begin, load_land, load_population, set_data_version, end]
 
 
 logging.basicConfig(level=logging.INFO)

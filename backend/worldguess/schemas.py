@@ -1,23 +1,39 @@
-from pydantic import BaseModel
+from enum import Enum
+
+from pydantic import BaseModel, Field
 
 
-class PopulationGuessRequest(BaseModel):
-    center_latitude: float
-    center_longitude: float
-    radius_meters: float
-    user_guess: int
+class DifficultyLevel(str, Enum):
+    REGIONAL = "regional"
+    COUNTRY = "country"
+    CONTINENTAL = "continental"
 
 
-class PopulationGuessResponse(BaseModel):
-    actual_population: float
-    user_guess: int
-    accuracy_percentage: float
-    is_correct: bool
+class GameConfig(BaseModel):
+    """Configuration for a population guessing game."""
+
+    latitude: float = Field(..., ge=-90, le=90)
+    longitude: float = Field(..., ge=-180, le=180)
+    radius_km: float = Field(..., gt=0)
+    difficulty: DifficultyLevel | None = None
 
 
-class PopulationStatisticsResponse(BaseModel):
-    total_cells: int
-    total_population: float
-    avg_density: float
-    max_density: float
-    min_density: float
+class PopulationResult(BaseModel):
+    """Result of population calculation within a circle."""
+
+    population: int
+    latitude: float
+    longitude: float
+    radius_km: float
+    difficulty: DifficultyLevel | None = None
+
+
+class RandomGameResponse(BaseModel):
+    """Response for random game generation."""
+
+    game_id: str
+    latitude: float
+    longitude: float
+    radius_km: float
+    difficulty: DifficultyLevel
+    share_url: str

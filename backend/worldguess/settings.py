@@ -11,6 +11,7 @@ class Settings(BaseSettings):
     RELOAD: bool = False
     DEBUG: bool = False
     STATIC_DIR: str = "./static"
+    BASE_URL: str = "http://localhost:8090"
     POSTGRES_DB: str = "worldguess"
     POSTGRES_USER: str = "worldguess"
     POSTGRES_PASSWORD: str = "worldguess"
