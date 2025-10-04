@@ -84,7 +84,7 @@ const Main: React.FC = () => {
   const handleGuess = useCallback(async () => {
     // In design mode, always calculate without requiring a guess
     if (gameState.mode === 'design') {
-      const population = await calculatePopulation();
+      await calculatePopulation();
       return;
     }
 
