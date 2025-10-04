@@ -35,5 +35,5 @@ class RandomGameResponse(BaseModel):
     latitude: float
     longitude: float
     radius_km: float
-    difficulty: DifficultyLevel
+    difficulty: DifficultyLevel | None = None
     share_url: str

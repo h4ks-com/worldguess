@@ -150,11 +150,30 @@ docker compose up
 3. Regenerate frontend client: `npm run api`
 4. Frontend gains type-safe access to new endpoints
 
-### Code Quality Pipeline
-- Pre-commit hooks ensure code quality
-- Ruff handles Python formatting and linting
-- MyPy provides static type checking
-- Prettier formats TypeScript code
+### Code Quality
+The project uses a Makefile to streamline code quality checks across all components:
+
+```bash
+make lint              # Run all linters (backend, frontend, pipelines)
+make format            # Format all code
+make lint-backend      # Lint backend (ruff, mypy)
+make lint-frontend     # Lint frontend (prettier)
+make lint-pipelines    # Lint pipelines (ruff, mypy)
+make format-backend    # Format backend code
+make format-frontend   # Format frontend code
+make format-pipelines  # Format pipelines code
+```
+
+**Quality Tools:**
+- **Ruff**: Python formatting and linting (backend, pipelines)
+- **MyPy**: Static type checking with Python 3.12+ syntax (backend, pipelines)
+- **Prettier**: TypeScript/JavaScript formatting (frontend)
+
+**Code Standards:**
+- Python 3.12+ type hints (dict, list, | instead of Union/Optional)
+- SQLAlchemy 2.0 ORM patterns with type safety
+- Modern async/await patterns
+- Minimal comments (explain why, not what)
 
 ## Future Considerations
 

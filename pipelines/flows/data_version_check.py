@@ -18,8 +18,8 @@ def has_data_version(database_session: Session, version_hash: str) -> bool:
 
 def should_skip_pipeline(job: Job, version_hash: str) -> bool:
     with job.with_pg_session() as database_session:
-        # Ensure tables exist
         database_engine = database_session.bind
-        Base.metadata.create_all(bind=database_engine)
+        if database_engine is not None:
+            Base.metadata.create_all(bind=database_engine)
 
         return has_data_version(database_session, version_hash)
