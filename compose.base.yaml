@@ -47,3 +47,4 @@ services:
       MEMCACHE_SERVER: memcached
       STATIC_DIR: /static/build
       PORT: 8000
+      BASE_URL: ${BASE_URL}

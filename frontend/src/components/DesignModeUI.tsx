@@ -65,7 +65,7 @@ export const DesignModeUI: React.FC<DesignModeUIProps> = ({
                 onClick={() => onMapLayerChange('default')}
                 className={`px-2 py-1 text-xs font-medium rounded transition-colors ${
                   mapLayer === 'default'
-                    ? 'bg-white text-gray-900 shadow-sm'
+                    ? 'bg-blue-600 text-white shadow-sm'
                     : 'text-gray-600 hover:text-gray-900'
                 }`}
               >
@@ -75,7 +75,7 @@ export const DesignModeUI: React.FC<DesignModeUIProps> = ({
                 onClick={() => onMapLayerChange('satellite')}
                 className={`px-2 py-1 text-xs font-medium rounded transition-colors ${
                   mapLayer === 'satellite'
-                    ? 'bg-white text-gray-900 shadow-sm'
+                    ? 'bg-blue-600 text-white shadow-sm'
                     : 'text-gray-600 hover:text-gray-900'
                 }`}
               >
@@ -219,6 +219,30 @@ export const DesignModeUI: React.FC<DesignModeUIProps> = ({
           </div>
 
           <div className='space-y-4'>
+            {/* Layer Switcher */}
+            <div className='flex bg-gray-100 rounded-xl p-1'>
+              <button
+                onClick={() => onMapLayerChange('default')}
+                className={`flex-1 px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
+                  mapLayer === 'default'
+                    ? 'bg-blue-600 text-white shadow-sm'
+                    : 'text-gray-600 hover:text-gray-900'
+                }`}
+              >
+                Map
+              </button>
+              <button
+                onClick={() => onMapLayerChange('satellite')}
+                className={`flex-1 px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
+                  mapLayer === 'satellite'
+                    ? 'bg-blue-600 text-white shadow-sm'
+                    : 'text-gray-600 hover:text-gray-900'
+                }`}
+              >
+                Satellite
+              </button>
+            </div>
+
             <button
               onClick={onSetCenter}
               disabled={isSettingCenter}

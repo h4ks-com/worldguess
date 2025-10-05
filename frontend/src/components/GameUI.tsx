@@ -74,7 +74,7 @@ export const GameUI: React.FC<GameUIProps> = ({
                   onClick={() => onMapLayerChange('default')}
                   className={`px-2 py-1 text-xs font-medium rounded transition-colors ${
                     mapLayer === 'default'
-                      ? 'bg-white text-gray-900 shadow-sm'
+                      ? 'bg-blue-600 text-white shadow-sm'
                       : 'text-gray-600 hover:text-gray-900'
                   }`}
                 >
@@ -84,7 +84,7 @@ export const GameUI: React.FC<GameUIProps> = ({
                   onClick={() => onMapLayerChange('satellite')}
                   className={`px-2 py-1 text-xs font-medium rounded transition-colors ${
                     mapLayer === 'satellite'
-                      ? 'bg-white text-gray-900 shadow-sm'
+                      ? 'bg-blue-600 text-white shadow-sm'
                       : 'text-gray-600 hover:text-gray-900'
                   }`}
                 >
@@ -142,6 +142,19 @@ export const GameUI: React.FC<GameUIProps> = ({
                   {isLoading ? 'Loading...' : 'Submit'}
                 </button>
               </div>
+              <button
+                onClick={onNext}
+                disabled={isLoading}
+                className='w-full px-4 py-2 bg-gray-600 text-white rounded-lg font-semibold text-sm hover:bg-gray-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2'
+              >
+                {isLoading && (
+                  <svg className='animate-spin h-4 w-4' fill='none' viewBox='0 0 24 24'>
+                    <circle className='opacity-25' cx='12' cy='12' r='10' stroke='currentColor' strokeWidth='4'></circle>
+                    <path className='opacity-75' fill='currentColor' d='M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z'></path>
+                  </svg>
+                )}
+                {isLoading ? 'Loading...' : 'Skip Place'}
+              </button>
             </div>
           </div>
         ) : (
@@ -155,15 +168,15 @@ export const GameUI: React.FC<GameUIProps> = ({
               let colorScheme;
               let label;
 
-              if (actual === 0) {
-                if (guess <= 100) {
+              if (actual < 1000) {
+                if (guess < 1000) {
                   colorScheme = {
                     bg: 'bg-green-50',
                     border: 'border-green-200',
                     text: 'text-green-600',
                   };
                   label = 'GOOD';
-                } else if (guess <= 1000) {
+                } else if (guess < 2000) {
                   colorScheme = {
                     bg: 'bg-yellow-50',
                     border: 'border-yellow-200',
@@ -180,14 +193,14 @@ export const GameUI: React.FC<GameUIProps> = ({
                 }
               } else {
                 const relativeError = difference / actual;
-                if (relativeError <= 0.1) {
+                if (relativeError <= 0.3) {
                   colorScheme = {
                     bg: 'bg-green-50',
                     border: 'border-green-200',
                     text: 'text-green-600',
                   };
                   label = 'GOOD';
-                } else if (relativeError <= 0.3) {
+                } else if (relativeError <= 0.5) {
                   colorScheme = {
                     bg: 'bg-yellow-50',
                     border: 'border-yellow-200',
@@ -232,9 +245,16 @@ export const GameUI: React.FC<GameUIProps> = ({
 
             <button
               onClick={onNext}
-              className='w-full px-4 py-2 bg-blue-600 text-white rounded-lg font-semibold text-sm hover:bg-blue-700 transition-colors'
+              disabled={isLoading}
+              className='w-full px-4 py-2 bg-blue-600 text-white rounded-lg font-semibold text-sm hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2'
             >
-              Next Game
+              {isLoading && (
+                <svg className='animate-spin h-4 w-4' fill='none' viewBox='0 0 24 24'>
+                  <circle className='opacity-25' cx='12' cy='12' r='10' stroke='currentColor' strokeWidth='4'></circle>
+                  <path className='opacity-75' fill='currentColor' d='M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z'></path>
+                </svg>
+              )}
+              {isLoading ? 'Loading...' : 'Next Place'}
             </button>
           </div>
         )}
@@ -371,16 +391,55 @@ export const GameUI: React.FC<GameUIProps> = ({
                 </div>
               </div>
 
-              <button
-                onClick={onGuess}
-                disabled={!gameState.userGuess || isLoading}
-                className='w-full px-6 py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors shadow-lg shadow-blue-600/20'
-              >
-                {isLoading ? 'Loading...' : 'Submit Guess'}
-              </button>
+              <div className='flex gap-3'>
+                <button
+                  onClick={onNext}
+                  disabled={isLoading}
+                  className='px-6 py-3 bg-gray-600 text-white rounded-xl font-semibold hover:bg-gray-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2 flex-1'
+                >
+                  {isLoading && (
+                    <svg className='animate-spin h-4 w-4' fill='none' viewBox='0 0 24 24'>
+                      <circle className='opacity-25' cx='12' cy='12' r='10' stroke='currentColor' strokeWidth='4'></circle>
+                      <path className='opacity-75' fill='currentColor' d='M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z'></path>
+                    </svg>
+                  )}
+                  {isLoading ? 'Loading...' : 'Skip Place'}
+                </button>
+                <button
+                  onClick={onGuess}
+                  disabled={!gameState.userGuess || isLoading}
+                  className='px-6 py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors shadow-lg shadow-blue-600/20 flex-1'
+                >
+                  {isLoading ? 'Loading...' : 'Submit Guess'}
+                </button>
+              </div>
             </div>
           ) : (
             <div className='mt-6 space-y-4'>
+              {/* Layer Switcher */}
+              <div className='flex bg-gray-100 rounded-xl p-1'>
+                <button
+                  onClick={() => onMapLayerChange('default')}
+                  className={`flex-1 px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
+                    mapLayer === 'default'
+                      ? 'bg-blue-600 text-white shadow-sm'
+                      : 'text-gray-600 hover:text-gray-900'
+                  }`}
+                >
+                  Map
+                </button>
+                <button
+                  onClick={() => onMapLayerChange('satellite')}
+                  className={`flex-1 px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
+                    mapLayer === 'satellite'
+                      ? 'bg-blue-600 text-white shadow-sm'
+                      : 'text-gray-600 hover:text-gray-900'
+                  }`}
+                >
+                  Satellite
+                </button>
+              </div>
+
               <div className='bg-gradient-to-br from-gray-50 to-slate-50 border-2 border-gray-200 rounded-xl p-4'>
                 <div className='text-xs font-medium text-gray-500 uppercase tracking-wide mb-2'>
                   Actual Population
@@ -399,15 +458,15 @@ export const GameUI: React.FC<GameUIProps> = ({
                   let colorScheme;
                   let label;
 
-                  if (actual === 0) {
-                    if (guess <= 100) {
+                  if (actual < 1000) {
+                    if (guess < 1000) {
                       colorScheme = {
                         bg: 'from-green-50 to-emerald-50',
                         border: 'border-green-200',
                         text: 'text-green-600',
                       };
                       label = 'GOOD';
-                    } else if (guess <= 1000) {
+                    } else if (guess < 2000) {
                       colorScheme = {
                         bg: 'from-yellow-50 to-amber-50',
                         border: 'border-yellow-200',
@@ -424,14 +483,14 @@ export const GameUI: React.FC<GameUIProps> = ({
                     }
                   } else {
                     const relativeError = difference / actual;
-                    if (relativeError <= 0.1) {
+                    if (relativeError <= 0.3) {
                       colorScheme = {
                         bg: 'from-green-50 to-emerald-50',
                         border: 'border-green-200',
                         text: 'text-green-600',
                       };
                       label = 'GOOD';
-                    } else if (relativeError <= 0.3) {
+                    } else if (relativeError <= 0.5) {
                       colorScheme = {
                         bg: 'from-yellow-50 to-amber-50',
                         border: 'border-yellow-200',
@@ -480,9 +539,16 @@ export const GameUI: React.FC<GameUIProps> = ({
 
               <button
                 onClick={onNext}
-                className='w-full px-6 py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition-colors shadow-lg shadow-blue-600/20'
+                disabled={isLoading}
+                className='w-full px-6 py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors shadow-lg shadow-blue-600/20 flex items-center justify-center gap-2'
               >
-                Next Game
+                {isLoading && (
+                  <svg className='animate-spin h-4 w-4' fill='none' viewBox='0 0 24 24'>
+                    <circle className='opacity-25' cx='12' cy='12' r='10' stroke='currentColor' strokeWidth='4'></circle>
+                    <path className='opacity-75' fill='currentColor' d='M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z'></path>
+                  </svg>
+                )}
+                {isLoading ? 'Loading...' : 'Next Place'}
               </button>
             </div>
           )}
