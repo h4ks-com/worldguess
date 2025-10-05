@@ -8,6 +8,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
+from .database import get_engine
+from .orm.tables import Base
 from .routes import main_router
 from .settings import get_settings
 
@@ -15,6 +17,9 @@ from .settings import get_settings
 @asynccontextmanager
 async def lifespan(api: FastAPI) -> AsyncGenerator[None, None]:
     try:
+        # Create tables on startup
+        engine = get_engine()
+        Base.metadata.create_all(bind=engine)
         yield
     finally:
         pass

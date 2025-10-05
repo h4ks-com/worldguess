@@ -1,11 +1,11 @@
 import random
 import uuid
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import func, select, text
 from sqlalchemy.orm import Session
 
-from ..database import get_session
+from ..database import get_db
 from ..orm.tables import LandAreas
 from ..schemas import GameConfig, PopulationResult, RandomGameResponse, SizeClass
 from ..settings import get_settings
@@ -135,51 +135,49 @@ def _get_random_land_point(session: Session) -> tuple[float, float]:
 
 
 @router.post("/calculate")
-async def calculate_population(config: GameConfig) -> PopulationResult:
+async def calculate_population(
+    config: GameConfig,
+    session: Session = Depends(get_db),
+) -> PopulationResult:
     """Calculate population within a circular area."""
-    session = get_session()
-    try:
-        population = _calculate_population_in_circle(session, config.latitude, config.longitude, config.radius_km)
+    population = _calculate_population_in_circle(session, config.latitude, config.longitude, config.radius_km)
 
-        return PopulationResult(
-            population=population,
-            latitude=config.latitude,
-            longitude=config.longitude,
-            radius_km=config.radius_km,
-            size_class=config.size_class,
-        )
-    finally:
-        session.close()
+    return PopulationResult(
+        population=population,
+        latitude=config.latitude,
+        longitude=config.longitude,
+        radius_km=config.radius_km,
+        size_class=config.size_class,
+    )
 
 
 @router.post("/random")
-async def create_random_game(size_class: SizeClass) -> RandomGameResponse:
+async def create_random_game(
+    size_class: SizeClass,
+    session: Session = Depends(get_db),
+) -> RandomGameResponse:
     """Generate a random game with specified size class."""
-    session = get_session()
-    try:
-        latitude, longitude = _get_random_land_point(session)
+    latitude, longitude = _get_random_land_point(session)
 
-        min_radius, max_radius = SIZE_CLASS_RANGES[size_class]
-        radius_km = min_radius + random.random() * (max_radius - min_radius)
+    min_radius, max_radius = SIZE_CLASS_RANGES[size_class]
+    radius_km = min_radius + random.random() * (max_radius - min_radius)
 
-        game_id = str(uuid.uuid4())
-        settings = get_settings()
-        share_url = (
-            f"{settings.BASE_URL}?"
-            f"lat={latitude:.6f}&lon={longitude:.6f}&"
-            f"radius={radius_km:.2f}&size_class={size_class.value}&gameId={game_id}"
-        )
+    game_id = str(uuid.uuid4())
+    settings = get_settings()
+    share_url = (
+        f"{settings.BASE_URL}?"
+        f"lat={latitude:.6f}&lon={longitude:.6f}&"
+        f"radius={radius_km:.2f}&size_class={size_class.value}&gameId={game_id}"
+    )
 
-        return RandomGameResponse(
-            game_id=game_id,
-            latitude=latitude,
-            longitude=longitude,
-            radius_km=radius_km,
-            size_class=size_class,
-            share_url=share_url,
-        )
-    finally:
-        session.close()
+    return RandomGameResponse(
+        game_id=game_id,
+        latitude=latitude,
+        longitude=longitude,
+        radius_km=radius_km,
+        size_class=size_class,
+        share_url=share_url,
+    )
 
 
 @router.post("/create")

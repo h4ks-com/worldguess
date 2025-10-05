@@ -1,7 +1,8 @@
 import 'maplibre-gl/dist/maplibre-gl.css';
 import * as React from 'react';
-import {useCallback} from 'react';
+import {useCallback, useEffect, useState} from 'react';
 
+import {useChallengeMode} from '../hooks/useChallengeMode';
 import {useGameFromURL} from '../hooks/useGameFromURL';
 import {useGameState} from '../hooks/useGameState';
 import {useMapControls} from '../hooks/useMapControls';
@@ -12,7 +13,9 @@ import {DesignModeUI} from './DesignModeUI';
 import {GameUI} from './GameUI';
 import {MapContainer} from './MapContainer';
 import {MenuScreen} from './MenuScreen';
+import {NotFoundPage} from './NotFoundPage';
 import {Toast} from './Toast';
+import {UsernameDialog} from './UsernameDialog';
 
 const Main: React.FC = () => {
   const {
@@ -49,7 +52,28 @@ const Main: React.FC = () => {
 
   const {shareGame} = useURLSync(gameState);
 
-  // Load game from URL on mount
+  // Challenge mode state
+  const [challengeId, setChallengeId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const challenge = params.get('challengeId');
+    if (challenge) {
+      setChallengeId(challenge);
+    }
+  }, []);
+
+  const {
+    username,
+    showUsernameDialog,
+    guessSubmitted,
+    challengeNotFound,
+    existingGuess,
+    handleUsernameSubmit,
+    submitChallengeGuess,
+  } = useChallengeMode(challengeId, setGameState, setViewToCircle);
+
+  // Load game from URL on mount (only if not a challenge)
   useGameFromURL({setGameState, setViewToCircle});
 
   const handleStartRandomGame = useCallback(
@@ -94,6 +118,17 @@ const Main: React.FC = () => {
       return;
     }
 
+    // Challenge mode: just submit guess without revealing
+    if (challengeId) {
+      const success = await submitChallengeGuess(gameState.userGuess);
+      if (success) {
+        showToast('Guess submitted successfully!');
+      } else {
+        showToast('Failed to submit guess');
+      }
+      return;
+    }
+
     const population = await calculatePopulation();
 
     // Switch to satellite in game mode after revealing answer
@@ -103,7 +138,9 @@ const Main: React.FC = () => {
   }, [
     gameState.mode,
     gameState.userGuess,
+    challengeId,
     calculatePopulation,
+    submitChallengeGuess,
     showToast,
     setMapLayer,
   ]);
@@ -174,7 +211,29 @@ const Main: React.FC = () => {
     gameState.radiusKm,
   );
 
-  if (gameState.mode === 'menu') {
+  // Show 404 page if challenge not found
+  if (challengeNotFound) {
+    return <NotFoundPage />;
+  }
+
+  // If challengeId exists but still in menu mode, show loading or username dialog
+  if (challengeId && gameState.mode === 'menu') {
+    return (
+      <>
+        {showUsernameDialog && (
+          <UsernameDialog onSubmit={handleUsernameSubmit} />
+        )}
+        {!showUsernameDialog && (
+          <div className='fixed inset-0 flex items-center justify-center'>
+            <div className='text-2xl text-gray-600'>Loading challenge...</div>
+          </div>
+        )}
+      </>
+    );
+  }
+
+  // Show menu only if no challengeId
+  if (gameState.mode === 'menu' && !challengeId) {
     return (
       <MenuScreen
         isLoading={isLoading}
@@ -203,6 +262,8 @@ const Main: React.FC = () => {
             onReset={handleResetGame}
             onShare={handleShare}
             onNext={handleNext}
+            guessSubmitted={guessSubmitted}
+            existingGuess={existingGuess}
           />
         )}
 
@@ -242,6 +303,8 @@ const Main: React.FC = () => {
           showLayerSwitcher={false}
         />
       </div>
+
+      {showUsernameDialog && <UsernameDialog onSubmit={handleUsernameSubmit} />}
     </div>
   );
 };

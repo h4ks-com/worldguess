@@ -43,3 +43,13 @@ def get_session_context() -> Generator[Session, None, None]:
 def get_session() -> Session:
     session_factory = get_session_factory()
     return session_factory()
+
+
+def get_db() -> Generator[Session, None, None]:
+    """FastAPI dependency for database sessions."""
+    session_factory = get_session_factory()
+    session = session_factory()
+    try:
+        yield session
+    finally:
+        session.close()

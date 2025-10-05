@@ -1,6 +1,8 @@
+from datetime import datetime
+
 from geoalchemy2 import Geometry, Raster, WKBElement
-from sqlalchemy import String
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+from sqlalchemy import JSON, DateTime, Float, ForeignKey, String
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
 
 class Base(DeclarativeBase): ...
@@ -33,3 +35,33 @@ class DataVersion(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     version_hash: Mapped[str] = mapped_column(String, unique=True)
+
+
+class Challenge(Base):
+    __tablename__ = "challenges"
+
+    challenge_id: Mapped[str] = mapped_column(String, primary_key=True)
+    game_id: Mapped[str] = mapped_column(String, nullable=False)
+    latitude: Mapped[float] = mapped_column(Float, nullable=False)
+    longitude: Mapped[float] = mapped_column(Float, nullable=False)
+    radius_km: Mapped[float] = mapped_column(Float, nullable=False)
+    size_class: Mapped[str | None] = mapped_column(String, nullable=True)
+    webhook_url: Mapped[str | None] = mapped_column(String, nullable=True)
+    webhook_extra_params: Mapped[dict | None] = mapped_column(JSON, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+
+    guesses: Mapped[list["ChallengeGuess"]] = relationship(back_populates="challenge", cascade="all, delete-orphan")
+
+
+class ChallengeGuess(Base):
+    __tablename__ = "challenge_guesses"
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    challenge_id: Mapped[str] = mapped_column(
+        String, ForeignKey("challenges.challenge_id", ondelete="CASCADE"), nullable=False
+    )
+    username: Mapped[str] = mapped_column(String, nullable=False)
+    guess: Mapped[int] = mapped_column(nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+
+    challenge: Mapped["Challenge"] = relationship(back_populates="guesses")

@@ -15,6 +15,8 @@ interface GameUIProps {
   onReset: () => void;
   onShare: () => void;
   onNext: () => void;
+  guessSubmitted?: boolean;
+  existingGuess?: number | null;
 }
 
 export const GameUI: React.FC<GameUIProps> = ({
@@ -29,6 +31,8 @@ export const GameUI: React.FC<GameUIProps> = ({
   onReset,
   onShare,
   onNext,
+  guessSubmitted = false,
+  existingGuess = null,
 }) => {
   const handleManualInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -116,47 +120,93 @@ export const GameUI: React.FC<GameUIProps> = ({
 
         {/* Controls */}
         {!gameState.showResult ? (
-          <div className='px-3 py-3 space-y-3'>
-            <div className='space-y-2'>
-              <input
-                type='range'
-                min='0'
-                max={SLIDER_STEPS}
-                value={sliderValue}
-                onChange={e => onSliderChange(Number(e.target.value))}
-                className='w-full'
-              />
-              <div className='flex gap-2'>
-                <input
-                  type='text'
-                  value={gameState.userGuess || ''}
-                  onChange={handleManualInput}
-                  placeholder='Enter population'
-                  className='flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500'
-                />
-                <button
-                  onClick={onGuess}
-                  disabled={!gameState.userGuess || isLoading}
-                  className='px-4 py-2 bg-blue-600 text-white rounded-lg font-semibold text-sm hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors'
-                >
-                  {isLoading ? 'Loading...' : 'Submit'}
-                </button>
+          guessSubmitted && existingGuess !== null ? (
+            <div className='px-3 py-3'>
+              <div className='bg-green-50 border border-green-200 rounded-lg p-4'>
+                <div className='flex items-center gap-2 mb-2'>
+                  <svg
+                    className='w-5 h-5 text-green-600'
+                    fill='none'
+                    stroke='currentColor'
+                    viewBox='0 0 24 24'
+                  >
+                    <path
+                      strokeLinecap='round'
+                      strokeLinejoin='round'
+                      strokeWidth={2}
+                      d='M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z'
+                    />
+                  </svg>
+                  <h3 className='text-sm font-semibold text-green-800'>
+                    Guess Submitted
+                  </h3>
+                </div>
+                <p className='text-sm text-green-700'>
+                  Your guess: <span className='font-bold'>{existingGuess.toLocaleString()}</span>
+                </p>
+                <p className='text-xs text-green-600 mt-2'>
+                  Waiting for the challenge to end to see results...
+                </p>
               </div>
+            </div>
+          ) : (
+            <div className='px-3 py-3 space-y-3'>
+              <div className='space-y-2'>
+                <input
+                  type='range'
+                  min='0'
+                  max={SLIDER_STEPS}
+                  value={sliderValue}
+                  onChange={e => onSliderChange(Number(e.target.value))}
+                  className='w-full'
+                />
+                <div className='flex gap-2'>
+                  <input
+                    type='text'
+                    value={gameState.userGuess || ''}
+                    onChange={handleManualInput}
+                    placeholder='Enter population'
+                    className='flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500'
+                  />
+                  <button
+                    onClick={onGuess}
+                    disabled={!gameState.userGuess || isLoading}
+                    className='px-4 py-2 bg-blue-600 text-white rounded-lg font-semibold text-sm hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors'
+                  >
+                    {isLoading ? 'Loading...' : 'Submit'}
+                  </button>
+                </div>
               <button
                 onClick={onNext}
                 disabled={isLoading}
                 className='w-full px-4 py-2 bg-gray-600 text-white rounded-lg font-semibold text-sm hover:bg-gray-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2'
               >
                 {isLoading && (
-                  <svg className='animate-spin h-4 w-4' fill='none' viewBox='0 0 24 24'>
-                    <circle className='opacity-25' cx='12' cy='12' r='10' stroke='currentColor' strokeWidth='4'></circle>
-                    <path className='opacity-75' fill='currentColor' d='M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z'></path>
+                  <svg
+                    className='animate-spin h-4 w-4'
+                    fill='none'
+                    viewBox='0 0 24 24'
+                  >
+                    <circle
+                      className='opacity-25'
+                      cx='12'
+                      cy='12'
+                      r='10'
+                      stroke='currentColor'
+                      strokeWidth='4'
+                    ></circle>
+                    <path
+                      className='opacity-75'
+                      fill='currentColor'
+                      d='M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z'
+                    ></path>
                   </svg>
                 )}
                 {isLoading ? 'Loading...' : 'Skip Place'}
               </button>
             </div>
           </div>
+          )
         ) : (
           <div className='px-3 py-3 space-y-2'>
             {/* Result */}
@@ -249,9 +299,24 @@ export const GameUI: React.FC<GameUIProps> = ({
               className='w-full px-4 py-2 bg-blue-600 text-white rounded-lg font-semibold text-sm hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2'
             >
               {isLoading && (
-                <svg className='animate-spin h-4 w-4' fill='none' viewBox='0 0 24 24'>
-                  <circle className='opacity-25' cx='12' cy='12' r='10' stroke='currentColor' strokeWidth='4'></circle>
-                  <path className='opacity-75' fill='currentColor' d='M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z'></path>
+                <svg
+                  className='animate-spin h-4 w-4'
+                  fill='none'
+                  viewBox='0 0 24 24'
+                >
+                  <circle
+                    className='opacity-25'
+                    cx='12'
+                    cy='12'
+                    r='10'
+                    stroke='currentColor'
+                    strokeWidth='4'
+                  ></circle>
+                  <path
+                    className='opacity-75'
+                    fill='currentColor'
+                    d='M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z'
+                  ></path>
                 </svg>
               )}
               {isLoading ? 'Loading...' : 'Next Place'}
@@ -361,34 +426,64 @@ export const GameUI: React.FC<GameUIProps> = ({
           </div>
 
           {!gameState.showResult ? (
-            <div className='mt-6 space-y-4'>
-              <div>
-                <div className='text-sm font-semibold text-gray-700 mb-3'>
-                  Your Population Guess
-                </div>
-                <input
-                  type='range'
-                  min='0'
-                  max={SLIDER_STEPS}
-                  value={sliderValue}
-                  onChange={e => onSliderChange(Number(e.target.value))}
-                  className='w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600'
-                />
-                <div className='flex items-center gap-3 mt-3'>
-                  <input
-                    type='text'
-                    value={gameState.userGuess || ''}
-                    onChange={handleManualInput}
-                    placeholder='Enter population'
-                    className='flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500'
-                  />
-                  <div className='text-sm text-gray-600 whitespace-nowrap'>
-                    {gameState.userGuess
-                      ? parseInt(gameState.userGuess).toLocaleString()
-                      : '0'}{' '}
-                    people
+            guessSubmitted && existingGuess !== null ? (
+              <div className='mt-6'>
+                <div className='bg-green-50 border border-green-200 rounded-lg p-4'>
+                  <div className='flex items-center gap-2 mb-3'>
+                    <svg
+                      className='w-6 h-6 text-green-600'
+                      fill='none'
+                      stroke='currentColor'
+                      viewBox='0 0 24 24'
+                    >
+                      <path
+                        strokeLinecap='round'
+                        strokeLinejoin='round'
+                        strokeWidth={2}
+                        d='M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z'
+                      />
+                    </svg>
+                    <h3 className='text-base font-semibold text-green-800'>
+                      Guess Submitted
+                    </h3>
                   </div>
+                  <p className='text-sm text-green-700 mb-1'>
+                    Your guess: <span className='font-bold text-lg'>{existingGuess.toLocaleString()}</span> people
+                  </p>
+                  <p className='text-xs text-green-600'>
+                    Waiting for the challenge to end to see results...
+                  </p>
                 </div>
+              </div>
+            ) : (
+              <div className='mt-6 space-y-4'>
+                <div>
+                  <div className='text-sm font-semibold text-gray-700 mb-3'>
+                    Your Population Guess
+                  </div>
+                  <input
+                    type='range'
+                    min='0'
+                    max={SLIDER_STEPS}
+                    value={sliderValue}
+                    onChange={e => onSliderChange(Number(e.target.value))}
+                    className='w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600'
+                  />
+                  <div className='flex items-center gap-3 mt-3'>
+                    <input
+                      type='text'
+                      value={gameState.userGuess || ''}
+                      onChange={handleManualInput}
+                      placeholder='Enter population'
+                      className='flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500'
+                    />
+                    <div className='text-sm text-gray-600 whitespace-nowrap'>
+                      {gameState.userGuess
+                        ? parseInt(gameState.userGuess).toLocaleString()
+                        : '0'}{' '}
+                      people
+                    </div>
+                  </div>
               </div>
 
               <div className='flex gap-3'>
@@ -398,9 +493,24 @@ export const GameUI: React.FC<GameUIProps> = ({
                   className='px-6 py-3 bg-gray-600 text-white rounded-xl font-semibold hover:bg-gray-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2 flex-1'
                 >
                   {isLoading && (
-                    <svg className='animate-spin h-4 w-4' fill='none' viewBox='0 0 24 24'>
-                      <circle className='opacity-25' cx='12' cy='12' r='10' stroke='currentColor' strokeWidth='4'></circle>
-                      <path className='opacity-75' fill='currentColor' d='M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z'></path>
+                    <svg
+                      className='animate-spin h-4 w-4'
+                      fill='none'
+                      viewBox='0 0 24 24'
+                    >
+                      <circle
+                        className='opacity-25'
+                        cx='12'
+                        cy='12'
+                        r='10'
+                        stroke='currentColor'
+                        strokeWidth='4'
+                      ></circle>
+                      <path
+                        className='opacity-75'
+                        fill='currentColor'
+                        d='M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z'
+                      ></path>
                     </svg>
                   )}
                   {isLoading ? 'Loading...' : 'Skip Place'}
@@ -414,6 +524,7 @@ export const GameUI: React.FC<GameUIProps> = ({
                 </button>
               </div>
             </div>
+            )
           ) : (
             <div className='mt-6 space-y-4'>
               {/* Layer Switcher */}
@@ -543,9 +654,24 @@ export const GameUI: React.FC<GameUIProps> = ({
                 className='w-full px-6 py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors shadow-lg shadow-blue-600/20 flex items-center justify-center gap-2'
               >
                 {isLoading && (
-                  <svg className='animate-spin h-4 w-4' fill='none' viewBox='0 0 24 24'>
-                    <circle className='opacity-25' cx='12' cy='12' r='10' stroke='currentColor' strokeWidth='4'></circle>
-                    <path className='opacity-75' fill='currentColor' d='M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z'></path>
+                  <svg
+                    className='animate-spin h-4 w-4'
+                    fill='none'
+                    viewBox='0 0 24 24'
+                  >
+                    <circle
+                      className='opacity-25'
+                      cx='12'
+                      cy='12'
+                      r='10'
+                      stroke='currentColor'
+                      strokeWidth='4'
+                    ></circle>
+                    <path
+                      className='opacity-75'
+                      fill='currentColor'
+                      d='M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z'
+                    ></path>
                   </svg>
                 )}
                 {isLoading ? 'Loading...' : 'Next Place'}

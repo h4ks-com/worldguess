@@ -1,4 +1,4 @@
-.PHONY: lint lint-backend lint-frontend lint-pipelines format format-backend format-frontend format-pipelines test help
+.PHONY: lint lint-backend lint-frontend lint-pipelines format format-backend format-frontend format-pipelines test test-e2e generate-api-client help
 
 help:
 	@echo "Available commands:"
@@ -11,6 +11,8 @@ help:
 	@echo "  make format-frontend   Format frontend code (prettier)"
 	@echo "  make format-pipelines  Format pipelines code (ruff)"
 	@echo "  make test              Run all tests"
+	@echo "  make test-e2e          Run E2E tests for challenge flow (requires backend running)"
+	@echo "  make generate-api-client  Generate OpenAPI spec and frontend TypeScript client"
 
 lint: lint-backend lint-frontend lint-pipelines
 
@@ -50,6 +52,15 @@ test:
 	@echo "Running tests..."
 	cd backend && uv run pytest || true
 	cd frontend && npm test || true
+
+test-e2e:
+	@echo "Running E2E tests for challenge flow..."
+	@echo "Note: Backend must be running on http://localhost:8000"
+	cd e2e && python3 test_challenge_flow.py
+
+generate-api-client:
+	@echo "Generating OpenAPI spec and frontend TypeScript client..."
+	cd frontend && npm run api
 
 fix: format lint build-frontend
 	@echo "Code has been formatted and linted."
