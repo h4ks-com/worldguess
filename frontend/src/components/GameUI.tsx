@@ -17,6 +17,7 @@ interface GameUIProps {
   onNext: () => void;
   guessSubmitted?: boolean;
   existingGuess?: number | null;
+  challengeId?: string | null;
 }
 
 export const GameUI: React.FC<GameUIProps> = ({
@@ -33,6 +34,7 @@ export const GameUI: React.FC<GameUIProps> = ({
   onNext,
   guessSubmitted = false,
   existingGuess = null,
+  challengeId = null,
 }) => {
   const handleManualInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -142,7 +144,10 @@ export const GameUI: React.FC<GameUIProps> = ({
                   </h3>
                 </div>
                 <p className='text-sm text-green-700'>
-                  Your guess: <span className='font-bold'>{existingGuess.toLocaleString()}</span>
+                  Your guess:{' '}
+                  <span className='font-bold'>
+                    {existingGuess.toLocaleString()}
+                  </span>
                 </p>
                 <p className='text-xs text-green-600 mt-2'>
                   Waiting for the challenge to end to see results...
@@ -176,36 +181,38 @@ export const GameUI: React.FC<GameUIProps> = ({
                     {isLoading ? 'Loading...' : 'Submit'}
                   </button>
                 </div>
-              <button
-                onClick={onNext}
-                disabled={isLoading}
-                className='w-full px-4 py-2 bg-gray-600 text-white rounded-lg font-semibold text-sm hover:bg-gray-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2'
-              >
-                {isLoading && (
-                  <svg
-                    className='animate-spin h-4 w-4'
-                    fill='none'
-                    viewBox='0 0 24 24'
+                {!challengeId && gameState.sizeClass && (
+                  <button
+                    onClick={onNext}
+                    disabled={isLoading}
+                    className='w-full px-4 py-2 bg-gray-600 text-white rounded-lg font-semibold text-sm hover:bg-gray-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2'
                   >
-                    <circle
-                      className='opacity-25'
-                      cx='12'
-                      cy='12'
-                      r='10'
-                      stroke='currentColor'
-                      strokeWidth='4'
-                    ></circle>
-                    <path
-                      className='opacity-75'
-                      fill='currentColor'
-                      d='M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z'
-                    ></path>
-                  </svg>
+                  {isLoading && (
+                    <svg
+                      className='animate-spin h-4 w-4'
+                      fill='none'
+                      viewBox='0 0 24 24'
+                    >
+                      <circle
+                        className='opacity-25'
+                        cx='12'
+                        cy='12'
+                        r='10'
+                        stroke='currentColor'
+                        strokeWidth='4'
+                      ></circle>
+                      <path
+                        className='opacity-75'
+                        fill='currentColor'
+                        d='M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z'
+                      ></path>
+                    </svg>
+                  )}
+                  {isLoading ? 'Loading...' : 'Skip Place'}
+                </button>
                 )}
-                {isLoading ? 'Loading...' : 'Skip Place'}
-              </button>
+              </div>
             </div>
-          </div>
           )
         ) : (
           <div className='px-3 py-3 space-y-2'>
@@ -448,7 +455,11 @@ export const GameUI: React.FC<GameUIProps> = ({
                     </h3>
                   </div>
                   <p className='text-sm text-green-700 mb-1'>
-                    Your guess: <span className='font-bold text-lg'>{existingGuess.toLocaleString()}</span> people
+                    Your guess:{' '}
+                    <span className='font-bold text-lg'>
+                      {existingGuess.toLocaleString()}
+                    </span>{' '}
+                    people
                   </p>
                   <p className='text-xs text-green-600'>
                     Waiting for the challenge to end to see results...
@@ -484,46 +495,48 @@ export const GameUI: React.FC<GameUIProps> = ({
                       people
                     </div>
                   </div>
-              </div>
+                </div>
 
-              <div className='flex gap-3'>
-                <button
-                  onClick={onNext}
-                  disabled={isLoading}
-                  className='px-6 py-3 bg-gray-600 text-white rounded-xl font-semibold hover:bg-gray-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2 flex-1'
-                >
-                  {isLoading && (
-                    <svg
-                      className='animate-spin h-4 w-4'
-                      fill='none'
-                      viewBox='0 0 24 24'
+                <div className='flex gap-3'>
+                  {!challengeId && gameState.sizeClass && (
+                    <button
+                      onClick={onNext}
+                      disabled={isLoading}
+                      className='px-6 py-3 bg-gray-600 text-white rounded-xl font-semibold hover:bg-gray-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2 flex-1'
                     >
-                      <circle
-                        className='opacity-25'
-                        cx='12'
-                        cy='12'
-                        r='10'
-                        stroke='currentColor'
-                        strokeWidth='4'
-                      ></circle>
-                      <path
-                        className='opacity-75'
-                        fill='currentColor'
-                        d='M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z'
-                      ></path>
-                    </svg>
+                      {isLoading && (
+                        <svg
+                          className='animate-spin h-4 w-4'
+                          fill='none'
+                          viewBox='0 0 24 24'
+                        >
+                          <circle
+                            className='opacity-25'
+                            cx='12'
+                            cy='12'
+                            r='10'
+                            stroke='currentColor'
+                            strokeWidth='4'
+                          ></circle>
+                          <path
+                            className='opacity-75'
+                            fill='currentColor'
+                            d='M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z'
+                          ></path>
+                        </svg>
+                      )}
+                      {isLoading ? 'Loading...' : 'Skip Place'}
+                    </button>
                   )}
-                  {isLoading ? 'Loading...' : 'Skip Place'}
-                </button>
-                <button
-                  onClick={onGuess}
-                  disabled={!gameState.userGuess || isLoading}
-                  className='px-6 py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors shadow-lg shadow-blue-600/20 flex-1'
-                >
-                  {isLoading ? 'Loading...' : 'Submit Guess'}
-                </button>
+                  <button
+                    onClick={onGuess}
+                    disabled={!gameState.userGuess || isLoading}
+                    className='px-6 py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors shadow-lg shadow-blue-600/20 flex-1'
+                  >
+                    {isLoading ? 'Loading...' : 'Submit Guess'}
+                  </button>
+                </div>
               </div>
-            </div>
             )
           ) : (
             <div className='mt-6 space-y-4'>

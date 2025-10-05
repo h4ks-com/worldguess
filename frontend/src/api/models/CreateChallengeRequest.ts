@@ -16,5 +16,6 @@ export type CreateChallengeRequest = {
   radius_km: number;
   size_class?: SizeClass | null;
   webhook_url?: string | null;
+  webhook_token?: string | null;
   webhook_extra_params?: Record<string, any> | null;
 };

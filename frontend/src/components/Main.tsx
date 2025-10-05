@@ -103,6 +103,12 @@ const Main: React.FC = () => {
     setSliderValue(0);
     resetViewState();
     setIsSettingCenter(false);
+
+    // Clear challengeId and remove from URL
+    setChallengeId(null);
+    const url = new URL(window.location.href);
+    url.searchParams.delete('challengeId');
+    window.history.replaceState({}, '', url.toString());
   }, [resetGame, setSliderValue, resetViewState, setIsSettingCenter]);
 
   const handleGuess = useCallback(async () => {
@@ -264,6 +270,7 @@ const Main: React.FC = () => {
             onNext={handleNext}
             guessSubmitted={guessSubmitted}
             existingGuess={existingGuess}
+            challengeId={challengeId}
           />
         )}
 

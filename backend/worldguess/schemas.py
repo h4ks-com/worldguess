@@ -48,6 +48,7 @@ class CreateChallengeRequest(BaseModel):
     radius_km: float = Field(..., gt=0)
     size_class: SizeClass | None = None
     webhook_url: str | None = None
+    webhook_token: str | None = None
     webhook_extra_params: dict[str, Any] | None = None
 
 

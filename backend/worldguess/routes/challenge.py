@@ -23,11 +23,20 @@ from ..settings import get_settings
 router = APIRouter(tags=["challenge"], prefix="/challenge")
 
 
-async def _send_webhook(url: str, data: dict[str, Any]) -> None:
-    """Send webhook notification asynchronously."""
+async def _send_webhook(url: str, data: dict[str, Any], token: str | None = None) -> None:
+    """Send webhook notification asynchronously with optional Bearer token."""
+    headers = {}
+    if token:
+        headers["Authorization"] = f"Bearer {token}"
+
+    # Map 'channel' to 'target' for IRC bot compatibility
+    if "channel" in data and "target" not in data:
+        data["target"] = data.pop("channel")
+
+    logging.info(f"Webhook: requesting {url}")
     try:
         async with httpx.AsyncClient() as client:
-            await client.post(url, json=data, timeout=10.0)
+            await client.post(url, json=data, headers=headers, timeout=10.0)
     except Exception as e:
         logging.error(f"Failed to send webhook to {url}: {e}")
 
@@ -49,6 +58,7 @@ async def create_challenge(
         radius_km=request.radius_km,
         size_class=request.size_class.value if request.size_class else None,
         webhook_url=request.webhook_url,
+        webhook_token=request.webhook_token,
         webhook_extra_params=request.webhook_extra_params or {},
     )
 
@@ -144,7 +154,7 @@ async def submit_guess(
         webhook_data = {"message": f"{request.username} has made their guess"}
         if challenge.webhook_extra_params:
             webhook_data.update(challenge.webhook_extra_params)
-        await _send_webhook(challenge.webhook_url, webhook_data)
+        await _send_webhook(challenge.webhook_url, webhook_data, challenge.webhook_token)
 
     return SubmitGuessResponse(
         success=True,

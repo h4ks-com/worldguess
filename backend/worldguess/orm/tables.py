@@ -47,6 +47,7 @@ class Challenge(Base):
     radius_km: Mapped[float] = mapped_column(Float, nullable=False)
     size_class: Mapped[str | None] = mapped_column(String, nullable=True)
     webhook_url: Mapped[str | None] = mapped_column(String, nullable=True)
+    webhook_token: Mapped[str | None] = mapped_column(String, nullable=True)
     webhook_extra_params: Mapped[dict | None] = mapped_column(JSON, nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
 

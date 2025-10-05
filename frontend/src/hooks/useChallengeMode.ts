@@ -97,6 +97,8 @@ export const useChallengeMode = (
           },
         );
 
+        const guessValue = parseInt(guess);
+        setExistingGuess(guessValue);
         setGuessSubmitted(true);
         return true;
       } catch (error) {
