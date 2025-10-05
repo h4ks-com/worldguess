@@ -16,7 +16,7 @@ services:
   worldguess-pipelines:
     image: worldguess-pipelines
     pull_policy: never
-    restart: no
+    restart: on-failure
     build:
       context: ./
       dockerfile: ./pipelines/Dockerfile
@@ -33,6 +33,7 @@ services:
   worldguess-backend:
     image: worldguess-backend:latest
     pull_policy: never
+    restart: on-failure
     build:
       context: ./backend
       dockerfile: ./Dockerfile
