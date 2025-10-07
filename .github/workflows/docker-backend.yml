@@ -13,7 +13,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  build-backend:
+    name: Build Backend Image
     uses: ./.github/workflows/docker-build-push.yml
     with:
       image_name: worldguess-backend
