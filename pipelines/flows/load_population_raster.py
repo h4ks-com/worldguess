@@ -1,6 +1,7 @@
 import logging
 import os
 import subprocess
+import sys
 import tempfile
 from pathlib import Path
 
@@ -59,9 +60,13 @@ class LoadPopulationRaster(Job):
         response.raise_for_status()
 
         total_size = int(response.headers.get("content-length", 0))
+        total_formatted = format_bytes(total_size)
+        logging.info(f"Starting download of {total_formatted}...")
+        sys.stdout.flush()
+        sys.stderr.flush()
 
         downloaded_bytes = 0
-        log_interval = max(1, total_size // 10)  # Log every 10%
+        log_interval = max(1, total_size // 100)  # Log every 1% for better visibility
 
         with open(tiff_path, "ab" if "Range" in headers else "wb") as file_handle:
             for chunk in response.iter_content(chunk_size=8192):
@@ -76,6 +81,8 @@ class LoadPopulationRaster(Job):
                         logging.info(
                             f"Download progress: {progress_percent:.1f}% ({downloaded_formatted}/{total_formatted})"
                         )
+                        sys.stdout.flush()
+                        sys.stderr.flush()
 
         logging.info(f"Downloaded WorldPop data to: {tiff_path}")
         return tiff_path

@@ -15,4 +15,5 @@ export type GameConfig = {
   longitude: number;
   radius_km: number;
   size_class?: SizeClass | null;
+  guess?: number | null;
 };

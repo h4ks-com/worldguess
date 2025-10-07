@@ -18,6 +18,52 @@ export const useChallengeMode = (
   const [challengeNotFound, setChallengeNotFound] = useState(false);
   const [existingGuess, setExistingGuess] = useState<number | null>(null);
 
+  const loadChallengeData = useCallback(
+    async (user: string) => {
+      if (!challengeId) return;
+
+      try {
+        const data =
+          await apiClient.challenge.getChallengeV1ChallengeChallengeIdGet(
+            challengeId,
+          );
+
+        setGameState(prev => ({
+          ...prev,
+          mode: 'random',
+          latitude: data.latitude,
+          longitude: data.longitude,
+          radiusKm: data.radius_km,
+          sizeClass: data.size_class || null,
+          gameId: data.game_id,
+        }));
+
+        setViewToCircle(data.longitude, data.latitude, data.radius_km);
+
+        // Check if user already submitted a guess
+        try {
+          const guessData =
+            await apiClient.challenge.getUserGuessV1ChallengeChallengeIdGuessUsernameGet(
+              challengeId,
+              user,
+            );
+          if (guessData.guess !== null && guessData.guess !== undefined) {
+            setExistingGuess(guessData.guess);
+            setGuessSubmitted(true);
+          }
+        } catch (guessError) {
+          console.error('Failed to check existing guess:', guessError);
+        }
+      } catch (error: any) {
+        console.error('Failed to load challenge:', error);
+        if (error?.status === 404) {
+          setChallengeNotFound(true);
+        }
+      }
+    },
+    [challengeId, setGameState, setViewToCircle],
+  );
+
   useEffect(() => {
     if (!challengeId) return;
 
@@ -29,50 +75,7 @@ export const useChallengeMode = (
     } else {
       setShowUsernameDialog(true);
     }
-  }, [challengeId]);
-
-  const loadChallengeData = async (user: string) => {
-    if (!challengeId) return;
-
-    try {
-      const data =
-        await apiClient.challenge.getChallengeV1ChallengeChallengeIdGet(
-          challengeId,
-        );
-
-      setGameState(prev => ({
-        ...prev,
-        mode: 'random',
-        latitude: data.latitude,
-        longitude: data.longitude,
-        radiusKm: data.radius_km,
-        sizeClass: data.size_class || null,
-        gameId: data.game_id,
-      }));
-
-      setViewToCircle(data.longitude, data.latitude, data.radius_km);
-
-      // Check if user already submitted a guess
-      try {
-        const guessData =
-          await apiClient.challenge.getUserGuessV1ChallengeChallengeIdGuessUsernameGet(
-            challengeId,
-            user,
-          );
-        if (guessData.guess !== null && guessData.guess !== undefined) {
-          setExistingGuess(guessData.guess);
-          setGuessSubmitted(true);
-        }
-      } catch (guessError) {
-        console.error('Failed to check existing guess:', guessError);
-      }
-    } catch (error: any) {
-      console.error('Failed to load challenge:', error);
-      if (error?.status === 404) {
-        setChallengeNotFound(true);
-      }
-    }
-  };
+  }, [challengeId, loadChallengeData]);
 
   const handleUsernameSubmit = useCallback(
     async (user: string) => {

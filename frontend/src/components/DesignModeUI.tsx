@@ -82,25 +82,6 @@ export const DesignModeUI: React.FC<DesignModeUIProps> = ({
                 Sat
               </button>
             </div>
-
-            <button
-              onClick={onShare}
-              className='p-1.5 hover:bg-gray-100 rounded-lg transition-colors'
-            >
-              <svg
-                className='w-5 h-5 text-gray-600'
-                fill='none'
-                stroke='currentColor'
-                viewBox='0 0 24 24'
-              >
-                <path
-                  strokeLinecap='round'
-                  strokeLinejoin='round'
-                  strokeWidth={2}
-                  d='M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z'
-                />
-              </svg>
-            </button>
           </div>
         </div>
 
@@ -146,13 +127,34 @@ export const DesignModeUI: React.FC<DesignModeUIProps> = ({
             </div>
           )}
 
-          <button
-            onClick={onCalculate}
-            disabled={isLoading || gameState.latitude === 0}
-            className='w-full px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold text-sm disabled:bg-gray-300 disabled:cursor-not-allowed'
-          >
-            {isLoading ? 'Calculating...' : 'Calculate'}
-          </button>
+          <div className='flex gap-2'>
+            <button
+              onClick={onShare}
+              className='px-3 py-2 bg-gray-100 text-gray-700 rounded-lg font-semibold text-sm hover:bg-gray-200 transition-colors flex items-center justify-center'
+              title='Share game'
+            >
+              <svg
+                className='w-4 h-4'
+                fill='none'
+                stroke='currentColor'
+                viewBox='0 0 24 24'
+              >
+                <path
+                  strokeLinecap='round'
+                  strokeLinejoin='round'
+                  strokeWidth={2}
+                  d='M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z'
+                />
+              </svg>
+            </button>
+            <button
+              onClick={onCalculate}
+              disabled={isLoading || gameState.latitude === 0}
+              className='px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold text-sm disabled:bg-gray-300 disabled:cursor-not-allowed flex-1'
+            >
+              {isLoading ? 'Calculating...' : 'Calculate'}
+            </button>
+          </div>
         </div>
       </div>
 
@@ -197,25 +199,6 @@ export const DesignModeUI: React.FC<DesignModeUIProps> = ({
               </button>
               <h2 className='text-lg font-bold text-gray-800'>Design Game</h2>
             </div>
-            <button
-              onClick={onShare}
-              className='p-2 hover:bg-gray-100 rounded-lg transition-colors'
-              title='Share game'
-            >
-              <svg
-                className='w-5 h-5 text-gray-600'
-                fill='none'
-                stroke='currentColor'
-                viewBox='0 0 24 24'
-              >
-                <path
-                  strokeLinecap='round'
-                  strokeLinejoin='round'
-                  strokeWidth={2}
-                  d='M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z'
-                />
-              </svg>
-            </button>
           </div>
 
           <div className='space-y-4'>
@@ -298,13 +281,34 @@ export const DesignModeUI: React.FC<DesignModeUIProps> = ({
               </div>
             )}
 
-            <button
-              onClick={onCalculate}
-              disabled={isLoading || gameState.latitude === 0}
-              className='w-full px-4 py-3 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-xl hover:from-blue-600 hover:to-purple-600 transition-all font-semibold shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none'
-            >
-              {isLoading ? 'Calculating...' : 'Calculate Population'}
-            </button>
+            <div className='flex gap-3'>
+              <button
+                onClick={onShare}
+                className='px-4 py-3 bg-gray-100 text-gray-700 rounded-xl font-semibold hover:bg-gray-200 transition-colors flex items-center justify-center gap-2'
+                title='Share game'
+              >
+                <svg
+                  className='w-5 h-5'
+                  fill='none'
+                  stroke='currentColor'
+                  viewBox='0 0 24 24'
+                >
+                  <path
+                    strokeLinecap='round'
+                    strokeLinejoin='round'
+                    strokeWidth={2}
+                    d='M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z'
+                  />
+                </svg>
+              </button>
+              <button
+                onClick={onCalculate}
+                disabled={isLoading || gameState.latitude === 0}
+                className='px-4 py-3 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-xl hover:from-blue-600 hover:to-purple-600 transition-all font-semibold shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none flex-1'
+              >
+                {isLoading ? 'Calculating...' : 'Calculate Population'}
+              </button>
+            </div>
           </div>
         </div>
       </div>

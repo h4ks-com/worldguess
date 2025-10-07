@@ -10,6 +10,12 @@ class SizeClass(str, Enum):
     CONTINENTAL = "continental"
 
 
+class GuessQualification(str, Enum):
+    GOOD = "good"
+    MEH = "meh"
+    BAD = "bad"
+
+
 class GameConfig(BaseModel):
     """Configuration for a population guessing game."""
 
@@ -17,6 +23,7 @@ class GameConfig(BaseModel):
     longitude: float = Field(..., ge=-180, le=180)
     radius_km: float = Field(..., gt=0)
     size_class: SizeClass | None = None
+    guess: int | None = Field(None, ge=0)
 
 
 class PopulationResult(BaseModel):
@@ -27,6 +34,7 @@ class PopulationResult(BaseModel):
     longitude: float
     radius_km: float
     size_class: SizeClass | None = None
+    qualification: GuessQualification | None = None
 
 
 class RandomGameResponse(BaseModel):

@@ -9,6 +9,7 @@ from ..database import get_db
 from ..orm.tables import LandAreas
 from ..schemas import GameConfig, PopulationResult, RandomGameResponse, SizeClass
 from ..settings import get_settings
+from ..utils.guess_qualification import calculate_guess_qualification
 
 router = APIRouter(tags=["game"], prefix="/game")
 
@@ -142,12 +143,18 @@ async def calculate_population(
     """Calculate population within a circular area."""
     population = _calculate_population_in_circle(session, config.latitude, config.longitude, config.radius_km)
 
+    qualification = None
+    if config.guess is not None:
+        qual_str = calculate_guess_qualification(population, config.guess)
+        qualification = qual_str  # Will be converted to enum by Pydantic
+
     return PopulationResult(
         population=population,
         latitude=config.latitude,
         longitude=config.longitude,
         radius_km=config.radius_km,
         size_class=config.size_class,
+        qualification=qualification,
     )
 
 

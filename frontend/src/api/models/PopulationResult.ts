@@ -5,6 +5,7 @@
 /* tslint:disable */
 
 /* eslint-disable */
+import type {GuessQualification} from './GuessQualification';
 import type {SizeClass} from './SizeClass';
 
 /**
@@ -16,4 +17,5 @@ export type PopulationResult = {
   longitude: number;
   radius_km: number;
   size_class?: SizeClass | null;
+  qualification?: GuessQualification | null;
 };

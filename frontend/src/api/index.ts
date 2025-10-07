@@ -15,6 +15,7 @@ export type { CreateChallengeRequest } from './models/CreateChallengeRequest';
 export type { CreateChallengeResponse } from './models/CreateChallengeResponse';
 export type { EndChallengeResponse } from './models/EndChallengeResponse';
 export type { GameConfig } from './models/GameConfig';
+export { GuessQualification } from './models/GuessQualification';
 export type { HTTPValidationError } from './models/HTTPValidationError';
 export type { PopulationResult } from './models/PopulationResult';
 export type { RandomGameResponse } from './models/RandomGameResponse';

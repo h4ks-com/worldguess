@@ -23,6 +23,7 @@ dependencies = [
 dev = [
     "mypy>=1.17.1,<2",
     "ruff>=0.12.7,<0.13",
+    "pytest>=8.0.0,<9",
 ]
 
 [build-system]

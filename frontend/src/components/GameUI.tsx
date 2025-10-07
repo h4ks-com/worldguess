@@ -18,6 +18,8 @@ interface GameUIProps {
   guessSubmitted?: boolean;
   existingGuess?: number | null;
   challengeId?: string | null;
+  isCollapsed?: boolean;
+  onToggleCollapse?: () => void;
 }
 
 export const GameUI: React.FC<GameUIProps> = ({
@@ -35,6 +37,8 @@ export const GameUI: React.FC<GameUIProps> = ({
   guessSubmitted = false,
   existingGuess = null,
   challengeId = null,
+  isCollapsed = false,
+  onToggleCollapse,
 }) => {
   const handleManualInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -45,6 +49,36 @@ export const GameUI: React.FC<GameUIProps> = ({
 
   return (
     <>
+      {/* Expand Tab (shown when collapsed on desktop) */}
+      {isCollapsed && onToggleCollapse && (
+        <button
+          onClick={onToggleCollapse}
+          className='hidden md:block pointer-events-auto fixed top-1/2 left-0 -translate-y-1/2 bg-white/95 backdrop-blur-md border border-gray-200 rounded-r-lg shadow-lg hover:bg-gray-50 transition-all z-10 group'
+          style={{
+            borderLeft: 'none',
+            paddingTop: '1.5rem',
+            paddingBottom: '1.5rem',
+            paddingLeft: '0.5rem',
+            paddingRight: '0.75rem',
+          }}
+          title='Show panel'
+        >
+          <svg
+            className='w-5 h-5 text-gray-600 group-hover:text-blue-600 transition-colors'
+            fill='none'
+            stroke='currentColor'
+            viewBox='0 0 24 24'
+          >
+            <path
+              strokeLinecap='round'
+              strokeLinejoin='round'
+              strokeWidth={2}
+              d='M13 5l7 7-7 7M5 5l7 7-7 7'
+            />
+          </svg>
+        </button>
+      )}
+
       {/* Mobile Layout */}
       <div className='md:hidden w-full bg-white border-b border-gray-200 pointer-events-auto'>
         {/* Compact Header */}
@@ -98,25 +132,6 @@ export const GameUI: React.FC<GameUIProps> = ({
                 </button>
               </div>
             )}
-
-            <button
-              onClick={onShare}
-              className='p-1.5 hover:bg-gray-100 rounded-lg transition-colors'
-            >
-              <svg
-                className='w-5 h-5 text-gray-600'
-                fill='none'
-                stroke='currentColor'
-                viewBox='0 0 24 24'
-              >
-                <path
-                  strokeLinecap='round'
-                  strokeLinejoin='round'
-                  strokeWidth={2}
-                  d='M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z'
-                />
-              </svg>
-            </button>
           </div>
         </div>
 
@@ -165,52 +180,71 @@ export const GameUI: React.FC<GameUIProps> = ({
                   onChange={e => onSliderChange(Number(e.target.value))}
                   className='w-full'
                 />
+                <input
+                  type='text'
+                  value={gameState.userGuess || ''}
+                  onChange={handleManualInput}
+                  placeholder='Enter population'
+                  className='w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500'
+                />
                 <div className='flex gap-2'>
-                  <input
-                    type='text'
-                    value={gameState.userGuess || ''}
-                    onChange={handleManualInput}
-                    placeholder='Enter population'
-                    className='flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500'
-                  />
+                  <button
+                    onClick={onShare}
+                    className='px-3 py-2 bg-gray-100 text-gray-700 rounded-lg font-semibold text-sm hover:bg-gray-200 transition-colors flex items-center justify-center'
+                    title='Share game'
+                  >
+                    <svg
+                      className='w-4 h-4'
+                      fill='none'
+                      stroke='currentColor'
+                      viewBox='0 0 24 24'
+                    >
+                      <path
+                        strokeLinecap='round'
+                        strokeLinejoin='round'
+                        strokeWidth={2}
+                        d='M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z'
+                      />
+                    </svg>
+                  </button>
+                  {!challengeId && gameState.mode === 'random' && (
+                    <button
+                      onClick={onNext}
+                      disabled={isLoading}
+                      className='px-4 py-2 bg-gray-600 text-white rounded-lg font-semibold text-sm hover:bg-gray-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2 flex-1'
+                    >
+                      {isLoading && (
+                        <svg
+                          className='animate-spin h-4 w-4'
+                          fill='none'
+                          viewBox='0 0 24 24'
+                        >
+                          <circle
+                            className='opacity-25'
+                            cx='12'
+                            cy='12'
+                            r='10'
+                            stroke='currentColor'
+                            strokeWidth='4'
+                          ></circle>
+                          <path
+                            className='opacity-75'
+                            fill='currentColor'
+                            d='M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z'
+                          ></path>
+                        </svg>
+                      )}
+                      {isLoading ? 'Loading...' : 'Skip'}
+                    </button>
+                  )}
                   <button
                     onClick={onGuess}
                     disabled={!gameState.userGuess || isLoading}
-                    className='px-4 py-2 bg-blue-600 text-white rounded-lg font-semibold text-sm hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors'
+                    className='px-4 py-2 bg-blue-600 text-white rounded-lg font-semibold text-sm hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors flex-1'
                   >
                     {isLoading ? 'Loading...' : 'Submit'}
                   </button>
                 </div>
-                {!challengeId && gameState.sizeClass && (
-                  <button
-                    onClick={onNext}
-                    disabled={isLoading}
-                    className='w-full px-4 py-2 bg-gray-600 text-white rounded-lg font-semibold text-sm hover:bg-gray-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2'
-                  >
-                  {isLoading && (
-                    <svg
-                      className='animate-spin h-4 w-4'
-                      fill='none'
-                      viewBox='0 0 24 24'
-                    >
-                      <circle
-                        className='opacity-25'
-                        cx='12'
-                        cy='12'
-                        r='10'
-                        stroke='currentColor'
-                        strokeWidth='4'
-                      ></circle>
-                      <path
-                        className='opacity-75'
-                        fill='currentColor'
-                        d='M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z'
-                      ></path>
-                    </svg>
-                  )}
-                  {isLoading ? 'Loading...' : 'Skip Place'}
-                </button>
-                )}
               </div>
             </div>
           )
@@ -300,34 +334,57 @@ export const GameUI: React.FC<GameUIProps> = ({
               );
             })()}
 
-            <button
-              onClick={onNext}
-              disabled={isLoading}
-              className='w-full px-4 py-2 bg-blue-600 text-white rounded-lg font-semibold text-sm hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2'
-            >
-              {isLoading && (
-                <svg
-                  className='animate-spin h-4 w-4'
-                  fill='none'
-                  viewBox='0 0 24 24'
+            {!challengeId && gameState.mode === 'random' && (
+              <div className='flex gap-2'>
+                <button
+                  onClick={onShare}
+                  className='px-3 py-2 bg-gray-100 text-gray-700 rounded-lg font-semibold text-sm hover:bg-gray-200 transition-colors flex items-center justify-center'
+                  title='Share game'
                 >
-                  <circle
-                    className='opacity-25'
-                    cx='12'
-                    cy='12'
-                    r='10'
+                  <svg
+                    className='w-4 h-4'
+                    fill='none'
                     stroke='currentColor'
-                    strokeWidth='4'
-                  ></circle>
-                  <path
-                    className='opacity-75'
-                    fill='currentColor'
-                    d='M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z'
-                  ></path>
-                </svg>
-              )}
-              {isLoading ? 'Loading...' : 'Next Place'}
-            </button>
+                    viewBox='0 0 24 24'
+                  >
+                    <path
+                      strokeLinecap='round'
+                      strokeLinejoin='round'
+                      strokeWidth={2}
+                      d='M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z'
+                    />
+                  </svg>
+                </button>
+                <button
+                  onClick={onNext}
+                  disabled={isLoading}
+                  className='px-4 py-2 bg-blue-600 text-white rounded-lg font-semibold text-sm hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2 flex-1'
+                >
+                  {isLoading && (
+                    <svg
+                      className='animate-spin h-4 w-4'
+                      fill='none'
+                      viewBox='0 0 24 24'
+                    >
+                      <circle
+                        className='opacity-25'
+                        cx='12'
+                        cy='12'
+                        r='10'
+                        stroke='currentColor'
+                        strokeWidth='4'
+                      ></circle>
+                      <path
+                        className='opacity-75'
+                        fill='currentColor'
+                        d='M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z'
+                      ></path>
+                    </svg>
+                  )}
+                  {isLoading ? 'Loading...' : 'Next'}
+                </button>
+              </div>
+            )}
           </div>
         )}
       </div>
@@ -347,6 +404,10 @@ export const GameUI: React.FC<GameUIProps> = ({
           borderRadius: '16px',
           boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
           border: '1px solid rgba(229, 231, 235, 1)',
+          transform: isCollapsed
+            ? 'translateX(calc(-100% - 1rem))'
+            : 'translateX(0)',
+          transition: 'transform 0.3s ease-in-out',
         }}
       >
         <div className='p-6'>
@@ -390,25 +451,27 @@ export const GameUI: React.FC<GameUIProps> = ({
                 )}
               </div>
             </div>
-            <button
-              onClick={onShare}
-              className='p-2 hover:bg-gray-100 rounded-lg transition-colors'
-              title='Share game'
-            >
-              <svg
-                className='w-5 h-5 text-gray-600'
-                fill='none'
-                stroke='currentColor'
-                viewBox='0 0 24 24'
+            {onToggleCollapse && (
+              <button
+                onClick={onToggleCollapse}
+                className='p-2 hover:bg-gray-100 rounded-lg transition-colors'
+                title='Hide panel'
               >
-                <path
-                  strokeLinecap='round'
-                  strokeLinejoin='round'
-                  strokeWidth={2}
-                  d='M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z'
-                />
-              </svg>
-            </button>
+                <svg
+                  className='w-5 h-5 text-gray-600'
+                  fill='none'
+                  stroke='currentColor'
+                  viewBox='0 0 24 24'
+                >
+                  <path
+                    strokeLinecap='round'
+                    strokeLinejoin='round'
+                    strokeWidth={2}
+                    d='M11 19l-7-7 7-7m8 14l-7-7 7-7'
+                  />
+                </svg>
+              </button>
+            )}
           </div>
 
           <div className='bg-gradient-to-br from-blue-50 to-purple-50 rounded-xl p-4 space-y-3 border border-gray-200'>
@@ -498,7 +561,26 @@ export const GameUI: React.FC<GameUIProps> = ({
                 </div>
 
                 <div className='flex gap-3'>
-                  {!challengeId && gameState.sizeClass && (
+                  <button
+                    onClick={onShare}
+                    className='px-4 py-3 bg-gray-100 text-gray-700 rounded-xl font-semibold hover:bg-gray-200 transition-colors flex items-center justify-center gap-2'
+                    title='Share game'
+                  >
+                    <svg
+                      className='w-5 h-5'
+                      fill='none'
+                      stroke='currentColor'
+                      viewBox='0 0 24 24'
+                    >
+                      <path
+                        strokeLinecap='round'
+                        strokeLinejoin='round'
+                        strokeWidth={2}
+                        d='M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z'
+                      />
+                    </svg>
+                  </button>
+                  {!challengeId && gameState.mode === 'random' && (
                     <button
                       onClick={onNext}
                       disabled={isLoading}
@@ -661,34 +743,57 @@ export const GameUI: React.FC<GameUIProps> = ({
                   );
                 })()}
 
-              <button
-                onClick={onNext}
-                disabled={isLoading}
-                className='w-full px-6 py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors shadow-lg shadow-blue-600/20 flex items-center justify-center gap-2'
-              >
-                {isLoading && (
-                  <svg
-                    className='animate-spin h-4 w-4'
-                    fill='none'
-                    viewBox='0 0 24 24'
+              {!challengeId && gameState.mode === 'random' && (
+                <div className='flex gap-3'>
+                  <button
+                    onClick={onShare}
+                    className='px-4 py-3 bg-gray-100 text-gray-700 rounded-xl font-semibold hover:bg-gray-200 transition-colors flex items-center justify-center gap-2'
+                    title='Share game'
                   >
-                    <circle
-                      className='opacity-25'
-                      cx='12'
-                      cy='12'
-                      r='10'
+                    <svg
+                      className='w-5 h-5'
+                      fill='none'
                       stroke='currentColor'
-                      strokeWidth='4'
-                    ></circle>
-                    <path
-                      className='opacity-75'
-                      fill='currentColor'
-                      d='M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z'
-                    ></path>
-                  </svg>
-                )}
-                {isLoading ? 'Loading...' : 'Next Place'}
-              </button>
+                      viewBox='0 0 24 24'
+                    >
+                      <path
+                        strokeLinecap='round'
+                        strokeLinejoin='round'
+                        strokeWidth={2}
+                        d='M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z'
+                      />
+                    </svg>
+                  </button>
+                  <button
+                    onClick={onNext}
+                    disabled={isLoading}
+                    className='px-6 py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors shadow-lg shadow-blue-600/20 flex items-center justify-center gap-2 flex-1'
+                  >
+                    {isLoading && (
+                      <svg
+                        className='animate-spin h-4 w-4'
+                        fill='none'
+                        viewBox='0 0 24 24'
+                      >
+                        <circle
+                          className='opacity-25'
+                          cx='12'
+                          cy='12'
+                          r='10'
+                          stroke='currentColor'
+                          strokeWidth='4'
+                        ></circle>
+                        <path
+                          className='opacity-75'
+                          fill='currentColor'
+                          d='M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z'
+                        ></path>
+                      </svg>
+                    )}
+                    {isLoading ? 'Loading...' : 'Next Place'}
+                  </button>
+                </div>
+              )}
             </div>
           )}
         </div>

@@ -19,6 +19,7 @@ from ..schemas import (
     SubmitGuessResponse,
 )
 from ..settings import get_settings
+from ..utils.guess_qualification import calculate_guess_qualification
 
 router = APIRouter(tags=["challenge"], prefix="/challenge")
 
@@ -187,23 +188,7 @@ async def end_challenge(
     rankings = []
     for guess in guesses:
         difference = abs(actual_population - guess.guess)
-
-        # Calculate score using same logic as frontend
-        if actual_population < 1000:
-            if guess.guess < 1000:
-                score = "good"
-            elif guess.guess < 2000:
-                score = "meh"
-            else:
-                score = "bad"
-        else:
-            relative_error = difference / actual_population
-            if relative_error <= 0.3:
-                score = "good"
-            elif relative_error <= 0.5:
-                score = "meh"
-            else:
-                score = "bad"
+        score = calculate_guess_qualification(actual_population, guess.guess)
 
         rankings.append(
             {

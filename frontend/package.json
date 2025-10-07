@@ -26,7 +26,8 @@
     "eject": "react-scripts eject",
     "format": "prettier --write src/**/*.{ts,tsx}",
     "check": "prettier --check src/**/*.{ts,tsx}",
-    "api": "generate_api_client.sh"
+    "api": "generate_api_client.sh",
+    "postinstall": "npx update-browserslist-db@latest"
   },
   "eslintConfig": {
     "extends": [
@@ -47,6 +48,7 @@
     ]
   },
   "devDependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@trivago/prettier-plugin-sort-imports": "^4.3.0",
     "autoprefixer": "^10.4.20",
     "form-data": "^4.0.3",

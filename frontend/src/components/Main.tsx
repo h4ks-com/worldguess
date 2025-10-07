@@ -54,6 +54,7 @@ const Main: React.FC = () => {
 
   // Challenge mode state
   const [challengeId, setChallengeId] = useState<string | null>(null);
+  const [isPanelCollapsed, setIsPanelCollapsed] = useState(false);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -64,7 +65,6 @@ const Main: React.FC = () => {
   }, []);
 
   const {
-    username,
     showUsernameDialog,
     guessSubmitted,
     challengeNotFound,
@@ -271,6 +271,8 @@ const Main: React.FC = () => {
             guessSubmitted={guessSubmitted}
             existingGuess={existingGuess}
             challengeId={challengeId}
+            isCollapsed={isPanelCollapsed}
+            onToggleCollapse={() => setIsPanelCollapsed(!isPanelCollapsed)}
           />
         )}
 
