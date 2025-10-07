@@ -1,0 +1,24 @@
+name: Build and Push Pipelines Docker Image
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'pipelines/**'
+      - '.github/workflows/docker-pipelines.yml'
+      - '.github/workflows/docker-build-push.yml'
+  release:
+    types: [published]
+  workflow_dispatch:
+
+jobs:
+  build:
+    uses: ./.github/workflows/docker-build-push.yml
+    with:
+      image_name: worldguess-pipelines
+      context: ./
+      dockerfile: ./pipelines/Dockerfile
+    secrets:
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
