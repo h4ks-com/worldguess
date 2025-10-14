@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from geoalchemy2 import Geometry, Raster, WKBElement
-from sqlalchemy import JSON, DateTime, Float, ForeignKey, String
+from sqlalchemy import JSON, BigInteger, DateTime, Float, ForeignKey, String
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
 
@@ -62,7 +62,7 @@ class ChallengeGuess(Base):
         String, ForeignKey("challenges.challenge_id", ondelete="CASCADE"), nullable=False
     )
     username: Mapped[str] = mapped_column(String, nullable=False)
-    guess: Mapped[int] = mapped_column(nullable=False)
+    guess: Mapped[int] = mapped_column(BigInteger, nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
 
     challenge: Mapped["Challenge"] = relationship(back_populates="guesses")
