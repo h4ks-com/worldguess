@@ -6,74 +6,32 @@ on:
       - main
 
 jobs:
-  build-and-deploy:
-    runs-on: [self-hosted, buildkit]
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-        with:
-          driver: remote
-          endpoint: tcp://buildkit.buildkit.svc.cluster.local:1234
-
-      - name: Build and push frontend
-        uses: docker/build-push-action@v5
-        with:
-          context: ./frontend
-          push: true
-          tags: |
-            192.168.2.201:5000/worldguess-frontend:${{ github.sha }}
-            192.168.2.201:5000/worldguess-frontend:latest
-
-      - name: Build and push pipelines
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          file: ./pipelines/Dockerfile
-          push: true
-          tags: |
-            192.168.2.201:5000/worldguess-pipelines:${{ github.sha }}
-            192.168.2.201:5000/worldguess-pipelines:latest
-
-      - name: Build and push backend
-        uses: docker/build-push-action@v5
-        with:
-          context: ./backend
-          push: true
-          tags: |
-            192.168.2.201:5000/worldguess-backend:${{ github.sha }}
-            192.168.2.201:5000/worldguess-backend:latest
-
-      - name: Install kubectl
-        uses: azure/setup-kubectl@v4
-        with:
-          version: 'latest'
-
-      - name: Configure kubectl for in-cluster access
-        run: |
-          kubectl config set-cluster kubernetes --server=https://kubernetes.default.svc --certificate-authority=/var/run/secrets/kubernetes.io/serviceaccount/ca.crt
-          kubectl config set-credentials runner --token=$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)
-          kubectl config set-context default --cluster=kubernetes --user=runner
-          kubectl config use-context default
-
-      - name: Update backend deployment
-        run: |
-          kubectl set image deployment/worldguess-backend \
-            backend=192.168.2.201:5000/worldguess-backend:${{ github.sha }} \
-            -n worldguess
-          kubectl set image deployment/worldguess-backend \
-            frontend-builder=192.168.2.201:5000/worldguess-frontend:${{ github.sha }} \
-            -n worldguess
-
-      - name: Restart pipelines job (if needed)
-        run: |
-          kubectl delete job worldguess-pipelines -n worldguess --ignore-not-found=true
-          kubectl create job worldguess-pipelines-${{ github.sha }} \
-            --from=job/worldguess-pipelines -n worldguess || true
-
-      - name: Wait for backend rollout
-        run: |
-          kubectl rollout status deployment/worldguess-backend -n worldguess --timeout=5m
+  deploy:
+    uses: h4ks-com/k3s-deploy/.github/workflows/k3s-deploy.yaml@main
+    with:
+      namespace: worldguess
+      deployment-name: worldguess-backend
+      services: |
+        [
+          {
+            "context": "./frontend",
+            "image": "worldguess-frontend",
+            "containers": ["frontend-builder"]
+          },
+          {
+            "context": ".",
+            "dockerfile": "./pipelines/Dockerfile",
+            "image": "worldguess-pipelines",
+            "containers": []
+          },
+          {
+            "context": "./backend",
+            "image": "worldguess-backend",
+            "containers": ["backend"]
+          }
+        ]
+      job-config: |
+        {
+          "name": "worldguess-pipelines",
+          "template": "worldguess-pipelines"
+        }
