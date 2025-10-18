@@ -6,32 +6,8 @@ on:
       - main
 
 jobs:
-  deploy:
+  build:
     uses: h4ks-com/k3s-deploy/.github/workflows/k3s-deploy.yaml@main
     with:
-      namespace: worldguess
-      deployment-name: worldguess-backend
-      services: |
-        [
-          {
-            "context": "./frontend",
-            "image": "worldguess-frontend",
-            "containers": ["frontend-builder"]
-          },
-          {
-            "context": ".",
-            "dockerfile": "./pipelines/Dockerfile",
-            "image": "worldguess-pipelines",
-            "containers": []
-          },
-          {
-            "context": "./backend",
-            "image": "worldguess-backend",
-            "containers": ["backend"]
-          }
-        ]
-      job-config: |
-        {
-          "name": "worldguess-pipelines",
-          "template": "worldguess-pipelines"
-        }
+      contexts: "./frontend,./backend"
+      images: "worldguess-frontend,worldguess-backend"
